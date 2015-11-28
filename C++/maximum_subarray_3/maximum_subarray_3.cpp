@@ -43,7 +43,7 @@ public:
 
 int main(int argc, char const *argv[]) {
 	Solution sol;
-	vector<int> nums = { 1, 2, 3, 4, -5, -5, 1, -4, 2, -5, 7 };
+	vector<int> nums { 1, 2, 3, 4, -5, -5, 1, -4, 2, -5, 7 };
 
 	auto ans = sol.maxSubArray(nums, 2);
 	printf("ans = %d\n", ans);
