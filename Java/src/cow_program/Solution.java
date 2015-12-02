@@ -4,10 +4,8 @@ Idea:
 Only consider plus reachable
 But bfs starts from halt state (go from reverse arrows), no matter the edge is '-' or '+'
  */
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
+
+import java.util.*;
 
 /**
  * Created by wing on 12/1/15.
@@ -20,15 +18,45 @@ public class Solution {
                 this.weight = weight;
             }
 
+            @Override
+            public String toString() {
+                return index + ": " + tails;
+            }
+
+
             int index;
             int weight;
-            char edgeType = '?'; // can be '-', '+', or '*'(both), ? is uninitialized (not reachable)
+            List<Edge> tails = new ArrayList<>();
             boolean plusVisited = false;
             boolean minusVisited = false;
-            ArrayList<Vertex> revHeads = new ArrayList<>(); // need to revert the direction of them
         }
 
-        List<Vertex> adjList = new ArrayList<>();
+        public class Edge { // need to revert the direction
+            public Edge(Vertex tail, int type) {
+                this.tail = tail;
+                this.type = type;
+            }
+
+            @Override
+            public String toString() {
+                return (type == 1 ? "+" : type == 2 ? "-" : "?") + tail.index;
+            }
+
+            Vertex tail;
+            int type = 0; // can be, in binary, '01'(+), '10'(-), or '11'(both + and -), 00 is uninitialized (not reachable)
+        }
+
+        @Override
+        public String toString() {
+            String res = "";
+            for (Vertex v : vertices) {
+                res += (v.toString() + "\n");
+            }
+            return res;
+        }
+
+        List<Vertex> vertices;
+        Vertex haltState;
     }
 
     public Graph readInput() {
@@ -37,11 +65,9 @@ public class Solution {
         List<Graph.Vertex> nodes = new ArrayList<>(n - 1);
         Graph g = new Graph();
         Graph.Vertex halt = g.new Vertex(0, 0);
-        halt.plusVisited = true;
         halt.minusVisited = true;
-        Graph.Vertex start = g.new Vertex(0, 0);
-        start.plusVisited = true;
-        start.minusVisited = true;
+        halt.plusVisited = true;
+        Graph.Vertex start = g.new Vertex(1, 0);
         nodes.add(halt); // halt state
         nodes.add(start); // starts from here but should never visit here again
 
@@ -53,16 +79,66 @@ public class Solution {
         for (Graph.Vertex node : nodes) {
             int plusLand = node.index + node.weight;
             int minusLand = node.index - node.weight;
-            if (plusLand < 0 || plusLand > n) plusLand = 0;
-            if (minusLand < 0 || minusLand > n) minusLand = 0;
-
-
+            if (plusLand < 1 || plusLand > n) plusLand = 0;
+            if (minusLand < 1 || minusLand > n) minusLand = 0;
+            Graph.Vertex nodePlus = nodes.get(plusLand);
+            Graph.Vertex nodeMinus = nodes.get(minusLand);
+            nodePlus.tails.add(g.new Edge(node, 1));
+            nodeMinus.tails.add(g.new Edge(node, 2));
+            if (node.index != 0) node.tails.add(g.new Edge(start, 1));
         }
+        g.haltState = halt;
+        g.vertices = nodes;
+        start.tails.clear();
+
+        System.out.println(g);
         return g;
     }
 
     public static void main(String[] args) {
-        // note: need to add back the initially added a_1 (+ i)
+        Solution sol = new Solution();
+        Graph graph = sol.readInput();
+        class ScoreState {
+            public ScoreState(int score, Graph.Vertex v) {
+                this.score = score;
+                this.v = v;
+            }
+
+            Graph.Vertex v;
+            int score;
+        }
+        Stack<ScoreState> s = new Stack<>();
+        s.push(new ScoreState(0, graph.haltState));
+        int[] ans = new int[graph.vertices.size() - 2]; // (n + 1) - 2
+
+        // must alternate between + and - edges
+        while (!s.isEmpty()) {
+            ScoreState ss = s.pop();
+            if (ss.v.plusVisited) {
+                for (Graph.Edge e : ss.v.tails) {
+                    if (!e.tail.minusVisited && e.type == 2) {
+                        int newScore = ss.score + e.tail.weight;
+                        s.push(new ScoreState(newScore, e.tail));
+                        e.tail.minusVisited = true;
+                    }
+                }
+            }
+            if (ss.v.minusVisited) {
+                for (Graph.Edge e : ss.v.tails) {
+                    if (!e.tail.plusVisited && e.type == 1) {
+                        int newScore = ss.score + e.tail.weight;
+                        if (e.tail.index == 1) ans[ss.v.index - 2] = newScore + e.tail.index - 1;
+                        else {
+                            s.push(new ScoreState(newScore, e.tail));
+                            e.tail.plusVisited = true;
+                        }
+                    }
+                }
+            }
+        }
+        for (int a : ans) {
+            System.out.println(a);
+        }
 
     }
 }
