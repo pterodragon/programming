@@ -20,13 +20,14 @@ public class Solution {
 
             @Override
             public String toString() {
-                return index + ": " + tails;
+                return index + ": " + plusTails + '|' + minusTails;
             }
 
 
             int index;
             int weight;
-            List<Edge> tails = new ArrayList<>();
+            List<Edge> plusTails = new ArrayList<>();
+            List<Edge> minusTails = new ArrayList<>();
             boolean plusVisited = false;
             boolean minusVisited = false;
         }
@@ -83,13 +84,13 @@ public class Solution {
             if (minusLand < 1 || minusLand > n) minusLand = 0;
             Graph.Vertex nodePlus = nodes.get(plusLand);
             Graph.Vertex nodeMinus = nodes.get(minusLand);
-            nodePlus.tails.add(g.new Edge(node, 1));
-            nodeMinus.tails.add(g.new Edge(node, 2));
-            if (node.index != 0) node.tails.add(g.new Edge(start, 1));
+            nodePlus.plusTails.add(g.new Edge(node, 1));
+            nodeMinus.minusTails.add(g.new Edge(node, 2));
+            if (node.index != 0) node.plusTails.add(g.new Edge(start, 1));
         }
         g.haltState = halt;
         g.vertices = nodes;
-        start.tails.clear();
+        start.plusTails.clear();
 
 //        System.out.println(g);
         return g;
@@ -118,8 +119,8 @@ public class Solution {
         while (!s.isEmpty()) {
             ScoreState ss = s.pop();
             if (ss.v.plusVisited) {
-                for (Graph.Edge e : ss.v.tails) {
-                    if (!e.tail.minusVisited && e.type == 2) {
+                for (Graph.Edge e : ss.v.minusTails) {
+                    if (!e.tail.minusVisited) {
                         int newScore = ss.score + e.tail.weight;
                         s.push(new ScoreState(newScore, e.tail));
                         e.tail.minusVisited = true;
@@ -127,8 +128,8 @@ public class Solution {
                 }
             }
             if (ss.v.minusVisited) {
-                for (Graph.Edge e : ss.v.tails) {
-                    if (!e.tail.plusVisited && e.type == 1) {
+                for (Graph.Edge e : ss.v.plusTails) {
+                    if (!e.tail.plusVisited) {
                         int newScore = ss.score + e.tail.weight;
                         if (e.tail.index == 1) ans[ss.v.index - 2] = newScore + ss.v.index - 1;
                         else {
