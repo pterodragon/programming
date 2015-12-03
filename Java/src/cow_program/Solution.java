@@ -91,7 +91,7 @@ public class Solution {
         g.vertices = nodes;
         start.tails.clear();
 
-        System.out.println(g);
+//        System.out.println(g);
         return g;
     }
 
@@ -110,6 +110,9 @@ public class Solution {
         Stack<ScoreState> s = new Stack<>();
         s.push(new ScoreState(0, graph.haltState));
         int[] ans = new int[graph.vertices.size() - 2]; // (n + 1) - 2
+        for (int i = 0; i < graph.vertices.size() - 2; i++) {
+            ans[i] = -1;
+        }
 
         // must alternate between + and - edges
         while (!s.isEmpty()) {
@@ -127,7 +130,7 @@ public class Solution {
                 for (Graph.Edge e : ss.v.tails) {
                     if (!e.tail.plusVisited && e.type == 1) {
                         int newScore = ss.score + e.tail.weight;
-                        if (e.tail.index == 1) ans[ss.v.index - 2] = newScore + e.tail.index - 1;
+                        if (e.tail.index == 1) ans[ss.v.index - 2] = newScore + ss.v.index - 1;
                         else {
                             s.push(new ScoreState(newScore, e.tail));
                             e.tail.plusVisited = true;
