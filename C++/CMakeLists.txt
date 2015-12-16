@@ -6,7 +6,9 @@ set(Boost_USE_MULTITHREADED ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 find_path(Boost_INCLUDE_DIR bootstrap.sh)
-find_library(Boost 1.58 REQUIRED thread asio)
+find_package(Boost 1.58 REQUIRED system thread)
+
+include_directories(${Boost_INCLUDE_DIR})
 
 add_subdirectory(AProject)
 add_subdirectory(maximum_subarray_3)
