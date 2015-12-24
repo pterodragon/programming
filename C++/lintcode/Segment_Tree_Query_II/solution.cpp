@@ -51,24 +51,23 @@ public:
 	int query(SegmentTreeNode *root, int start, int end) {
 		if (start > end || root == nullptr)
 			return 0;
-		if (root->start == start && root->end == end)
+		if (root->start >= start && root->end <= end) { // XXX: !!!! here is the thing, >= <= (inside the query range)
+			printf("reached [%d, %d]\n", root->start, root->end);
 			return root->count;
+		}
 		auto left_up = (root->start + root->end) / 2;
 		auto right_low = left_up + 1;
-		int result = 0;
-		if (start <= left_up) {
-			printf("goes to left\n");
-			printf("[%d, %d], (s, e) = (%d, %d)\n", root->start, root->end, start, end);
-			printf("(lu, rl) = (%d, %d)\n", left_up, right_low);
-			result += query(root->left, start, left_up);
+		printf("[%d, %d], (s, e) = (%d, %d)\n", root->start, root->end, start, end);
+		if (end < right_low) {
+			printf("going left\n");
+			return query(root->left, start, end);
 		}
-		if (end >= right_low) {
-			printf("goes to right\n");
-			printf("[%d, %d], (s, e) = (%d, %d)\n", root->start, root->end, start, end);
-			printf("(lu, rl) = (%d, %d)\n", left_up, right_low);
-			result += query(root->right, right_low, end);
+		if (start > left_up) {
+			printf("going right\n");
+			return query(root->right, start, end);
 		}
-		return result;
+		printf("splitting\n");
+		return query(root->left, start, left_up) + query(root->right, right_low, end);
 	}
 };
 
@@ -108,10 +107,11 @@ int main() {
 	auto tree = SegmentTreeNode::build(0, 14, A);
 	tree->print();
 	Solution sol;
-	array<pair<int, int>, 4> queries = { pair<int, int>{ 1, 1 }, pair<int, int>{ 2, 12 }, pair<int, int>{ 1, 16 }, pair<int, int>{ 8, 13 } };
+	array<pair<int, int>, 4> queries = { pair<int, int> { 1, 1 }, pair<int, int> { 2, 12 }, pair<int, int> { 1, 16 },
+			pair<int, int> { 8, 13 } };
 	for (auto const& pair : queries) {
 		auto ans = sol.query(tree, pair.first, pair.second);
-		printf("query(%d, %d) = %d\n", pair.first, pair.second, ans);
+		printf("-----query(%d, %d) = %d\n", pair.first, pair.second, ans);
 	}
 	return 0;
 }
