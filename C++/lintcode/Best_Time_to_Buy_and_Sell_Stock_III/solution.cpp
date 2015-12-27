@@ -13,14 +13,14 @@ public:
 			return 0;
 		vector<vector<vector<long>>> dp(
 				N + 2, vector<vector<long>>(
-						3, vector<long>(
+						4, vector<long>(
 								2, std::numeric_limits<int>::min())));
 		dp[0][0][0] = 0;
 		for (int i = 0; i < N + 1; i++) {
-			for (int j = 0; j < 2; j++) {
+			for (int j = 0; j < 2 + 1; j++) {
 				dp[i + 1][j][0] = max(dp[i + 1][j][0], dp[i][j][0]);
 				dp[i + 1][j][1] = max( { dp[i + 1][j][1], dp[i][j][1], dp[i][j][0] - prices[i] });
-				dp[i + 1][j + 1][0] = max( { dp[i + 1][j + 1][0], dp[i][j+1][0], dp[i][j][1] + prices[i] });
+				dp[i + 1][j + 1][0] = max( { dp[i + 1][j + 1][0], dp[i][j][1] + prices[i] });
 			}
 		}
 //		for (int i = 0; i < N + 1; i++) {
