@@ -1,9 +1,17 @@
+#include <fstream>
 #include <iostream>
-#include "temp/c.h"
 
 using namespace std;
 
 int main() {
-	cout << "in a.cpp" << endl;
-	cout << "calling source/c.cpp::helper()... " << helper() << endl;
+    string line;
+    constexpr const char *filename = "reddit_post.txt";
+    ifstream myfile(filename);
+    cout << boolalpha << myfile.is_open() << '\n';
+    myfile.close();
+    cout << boolalpha << myfile.is_open() << '\n';
+    while (getline(myfile, line)) {
+        cout << line << '\n';
+    }
+    return 0;
 }

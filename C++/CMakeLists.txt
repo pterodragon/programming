@@ -21,7 +21,7 @@ set(Boost_USE_MULTITHREADED ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 find_path(Boost_INCLUDE_DIR bootstrap.sh)
-find_package(Boost REQUIRED system thread)
+#find_package(Boost REQUIRED system thread)
 
 include_directories(${Boost_INCLUDE_DIR})
 
