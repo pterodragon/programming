@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <prettyprint.hpp>
 using namespace std;
 
 class Solution {
@@ -30,6 +31,7 @@ int main() {
         {3, {0, 1, 1, 1, 1, 0}}
     };
     for (auto p : tests) {
+        cout << "assert " << p.first << " == " << p.second << '\n';
         assert(p.first == sol.maxArea(p.second));
     }
     return 0;

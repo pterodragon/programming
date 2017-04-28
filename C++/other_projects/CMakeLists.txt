@@ -11,11 +11,7 @@ ENDMACRO()
 
 SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
-include_directories(${CXX_PRETTYPRINT_DIR})
 FOREACH(subdir ${SUBDIRS})
-    file(GLOB_RECURSE HEADERS "${subdir}/*.h")
-    file(GLOB_RECURSE SOURCES "${subdir}/*.cpp")
-    get_filename_component(subdirname ${subdir} NAME)
-    add_executable(${subdirname} ${SOURCES} ${HEADERS})
-    # target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+	ADD_SUBDIRECTORY(${subdir})
 ENDFOREACH()
+

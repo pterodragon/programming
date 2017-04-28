@@ -1,5 +1,13 @@
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.4)
 project (code_exercises)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+# list(APPEND CMAKE_INCLUDE_PATH "${CMAKE_CURRENT_LIST_DIR}/../third_party")
+set(THIRD_PARTY_DIR "${CMAKE_CURRENT_LIST_DIR}/third_party")
+list(APPEND CMAKE_INCLUDE_PATH ${THIRD_PARTY_DIR})
+
+include(FindPackageHandleStandardArgs)
+find_package(cxx_prettyprint REQUIRED)
 
 MACRO(SUBDIRLIST result curdir)
 	FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
@@ -12,10 +20,6 @@ MACRO(SUBDIRLIST result curdir)
 	SET(${result} ${dirlist})
 ENDMACRO()
 
-SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
-
-
-
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -23,9 +27,8 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_path(Boost_INCLUDE_DIR bootstrap.sh)
 #find_package(Boost REQUIRED system thread)
 
-include_directories(${Boost_INCLUDE_DIR})
-
-FOREACH(subdir ${SUBDIRS})
-	ADD_SUBDIRECTORY(${subdir})
-ENDFOREACH()
+add_subdirectory("coding_session/")
+add_subdirectory("leetcode/")
+add_subdirectory("lintcode/")
+add_subdirectory("other_projects/")
 
