@@ -22,3 +22,15 @@ class Solution {
         }
 };
 
+int main() {
+    Solution sol;
+    vector<pair<int, vector<int>>> tests = {
+        {10, {10, 10, 1, 1, 1, 0}},
+        {4, {1, 2, 4, 3}},
+        {3, {0, 1, 1, 1, 1, 0}}
+    };
+    for (auto p : tests) {
+        assert(p.first == sol.maxArea(p.second));
+    }
+    return 0;
+}
