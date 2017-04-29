@@ -2,7 +2,6 @@ cmake_minimum_required (VERSION 3.4)
 project (code_exercises)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-# list(APPEND CMAKE_INCLUDE_PATH "${CMAKE_CURRENT_LIST_DIR}/../third_party")
 set(THIRD_PARTY_DIR "${CMAKE_CURRENT_LIST_DIR}/third_party")
 list(APPEND CMAKE_INCLUDE_PATH ${THIRD_PARTY_DIR})
 
@@ -24,8 +23,11 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
-find_path(Boost_INCLUDE_DIR bootstrap.sh)
-#find_package(Boost REQUIRED system thread)
+find_package(Boost 1.62.0 QUIET #OPTIONAL_COMPONENTS filesystem regex
+    )
+if (NOT Boost_FOUND)
+    message(WARNING "Optional Boost dependency not found")
+endif()
 
 add_subdirectory("coding_session/")
 add_subdirectory("leetcode/")
