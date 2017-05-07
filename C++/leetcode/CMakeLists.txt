@@ -17,5 +17,8 @@ FOREACH(subdir ${SUBDIRS})
     file(GLOB_RECURSE SOURCES "${subdir}/*.cpp")
     get_filename_component(subdirname ${subdir} NAME)
     add_executable(${subdirname} ${SOURCES} ${HEADERS})
+    set_target_properties(${subdirname} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${subdirname}"
+    )
     # target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 ENDFOREACH()
