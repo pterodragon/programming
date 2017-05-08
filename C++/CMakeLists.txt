@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.4)
+cmake_minimum_required (VERSION 3.6)
 project (code_exercises)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -23,11 +23,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
-find_package(Boost 1.62.0 QUIET #OPTIONAL_COMPONENTS filesystem regex
-    )
-if (NOT Boost_FOUND)
-    message(WARNING "Optional Boost dependency not found")
-endif()
+find_package(Boost 1.62.0 COMPONENTS unit_test_framework REQUIRED)
 
 add_subdirectory("coding_session/")
 add_subdirectory("leetcode/")
