@@ -23,7 +23,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
-find_package(Boost 1.62.0 COMPONENTS unit_test_framework REQUIRED)
+find_package(Boost 1.62.0 COMPONENTS unit_test_framework filesystem regex REQUIRED)
 
 add_subdirectory("coding_session/")
 add_subdirectory("leetcode/")
