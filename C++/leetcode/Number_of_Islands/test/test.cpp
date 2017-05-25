@@ -16,16 +16,12 @@ BOOST_DATA_TEST_CASE(
         // ^ bdata::make( { 1, 2, 3, 5, 8, 13, 21, 35, 56 } ),
         island_map, expected)
 {
-    auto filepaths = get_all_test_filepaths();
-    for (const auto& f : filepaths) {
-        cout << f << '\n';
-    }
-    cout << "island map is " << island_map << '\n';
+    // auto filepaths = get_all_test_filepaths();
+    // for (const auto& f : filepaths) {
+    //     cout << f << '\n';
+    // }
+    // cout << "island map is " << island_map << '\n';
     Solution sol;
     int actual = sol.numIslands(island_map);
     BOOST_CHECK_EQUAL(actual, expected);
 }
-
-//BOOST_AUTO_TEST_CASE(FailTest) {
-//    BOOST_FAIL("");
-//}
