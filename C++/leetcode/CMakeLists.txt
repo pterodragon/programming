@@ -44,10 +44,12 @@ FOREACH(subdir ${SUBDIRS})
     )
 
     if (TEST_SOURCES)
+        add_library(${subproject_name}_lib_for_tests ${SOURCES} ${HEADERS})
         LIST(APPEND TEST_SOURCES "${test_common_dir}/test_common.cpp")
         set(test_name "${subdirname}_test")
         set(test_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${subdirname}/test")
-        add_executable(${test_name} ${SOURCES_NO_MAIN} ${HEADERS} ${TEST_SOURCES} ${TEST_HEADERS})
+        #add_executable(${test_name} ${SOURCES_NO_MAIN} ${HEADERS} ${TEST_SOURCES} ${TEST_HEADERS})
+        add_executable(${test_name} ${TEST_SOURCES} ${TEST_HEADERS})
         target_include_directories (${test_name} PRIVATE
             ${test_common_dir}
             ${subdirname}
@@ -55,6 +57,7 @@ FOREACH(subdir ${SUBDIRS})
         target_link_libraries (${test_name}
            ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
            ${Boost_LIBRARIES}
+           ${subproject_name}_lib_for_tests
         )
         add_test (NAME ${test_name}
             COMMAND "$<TARGET_FILE:${test_name}>"
