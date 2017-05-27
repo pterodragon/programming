@@ -22,6 +22,7 @@ BOOST_DATA_TEST_CASE(
     // }
     // cout << "island map is " << island_map << '\n';
     Solution sol;
-    int actual = sol.numIslands(island_map);
+    auto&& mutable_input = const_cast<vector<vector<char>>&>(island_map);
+    int actual = sol.numIslands(mutable_input);
     BOOST_CHECK_EQUAL(actual, expected);
 }
