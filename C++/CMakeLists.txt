@@ -29,4 +29,5 @@ add_subdirectory("coding_session/")
 add_subdirectory("leetcode/")
 add_subdirectory("lintcode/")
 add_subdirectory("other_projects/")
+add_subdirectory("algorithm/")
 
