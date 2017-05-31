@@ -45,7 +45,9 @@ void combinationUtil2(int arr[], int n, int r, int index, int data[], int i)
     // current is included, put next at next location
     data[index] = arr[i];
     combinationUtil2(arr, n, r, index+1, data, i+1);
- 
+    while (i < n && arr[i] == arr[i+1]) {
+        ++i; 
+    }
     // current is excluded, replace it with next (Note that
     // i+1 is passed, but index is not changed)
     combinationUtil2(arr, n, r, index, data, i+1);

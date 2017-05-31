@@ -1,0 +1,8 @@
+make sure the local and global version of ghc-mod version do not mismatch
+check this command
+    stack exec which ghc-mod
+also check this to check if there is any error
+    ghc-mod type <file.hs> line col 
+
+also make sure ghc-mod and hlint is installed
+    

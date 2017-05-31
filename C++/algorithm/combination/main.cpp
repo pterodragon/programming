@@ -5,6 +5,14 @@
 #include "combination1.h"
 #include "combination2.h"
 
+void run(int* arr, int n, int r) {
+    printf("### Include and exclude every element\n");
+    combination_include_and_exclude(arr, n, r);
+    printf("--------------------------------------------------\n");
+    printf("### fix elements and recur\n");
+    fix_elements_and_recur(arr, n, r);
+    printf("--------------------------------------------------\n");
+}
 
 // Driver program to test above functions
 int main()
@@ -12,11 +20,11 @@ int main()
     int arr[] = {1, 2, 1, 3, 1};
     int r = 3;
     int n = sizeof(arr)/sizeof(arr[0]);
-    printf("### Include and exclude every element\n");
-    combination_include_and_exclude(arr, n, r);
-    printf("--------------------------------------------------\n");
-    printf("### fix elements and recur\n");
-    fix_elements_and_recur(arr, n, r);
+    run(arr, n, r);
+    int arr2[] = {1, 1, 1, 1, 1};
+    r = 3;
+    n = sizeof(arr)/sizeof(arr[0]);
+    run(arr2, n, r);
     return 0;
 }
 

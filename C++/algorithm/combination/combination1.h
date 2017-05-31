@@ -16,11 +16,11 @@ void fix_elements_and_recur(int arr[], int n, int r)
 {
     // A temporary array to store all combination one by one
     int data[r];
-    for (int i=0; i<r; i++) {
+    for (int i=0; i<r; ++i) {
         data[i] = -1;
     }
     printf("init data=[");
-    for (int i=0; i<r; i++)
+    for (int i=0; i<r; ++i)
         printf("%d " ,data[i]);
     printf("]\n");
     fflush( stdout );
@@ -29,7 +29,7 @@ void fix_elements_and_recur(int arr[], int n, int r)
     printf("after qsort:\n");
 
     printf("fix_elements_and_recur([");
-    for (int i=0; i<n; i++)
+    for (int i=0; i<n; ++i)
         printf("%d " ,arr[i]);
     printf("], %d, %d)\n", n, r);
 
@@ -45,7 +45,7 @@ void fix_elements_and_recur(int arr[], int n, int r)
 void combinationUtil1(int arr[], int data[], int start, int end, int index, int r)
 {
     printf("---data = [");
-    for (int i=0; i<r; i++)
+    for (int i=0; i<r; ++i)
         printf("%d " ,data[i]);
     printf("]");
     printf(", start = %d, end = %d, index = %d, r = %d\n", start, end, index, r);
@@ -54,7 +54,7 @@ void combinationUtil1(int arr[], int data[], int start, int end, int index, int 
     if (index == r)
     {
         printf("result:[");
-        for (int i=0; i<r; i++)
+        for (int i=0; i<r; ++i)
             printf("%d " ,data[i]);
         printf("]\n");
         return;
@@ -64,7 +64,7 @@ void combinationUtil1(int arr[], int data[], int start, int end, int index, int 
     // "end-i+1 >= r-index" makes sure that including one element
     // at index will make a combination with remaining elements
     // at remaining positions
-    for (int i=start; i<=end && end-i+1 >= r-index; i++)
+    for (int i=start; i<=end && end-i+1 >= r-index; ++i)
     {
         printf("loop i=%d, start=%d, i<=end=%d, end>=(r-index+i-1)=%d\n", i, start, end, r-index+i-1);
         data[index] = arr[i];
@@ -73,10 +73,11 @@ void combinationUtil1(int arr[], int data[], int start, int end, int index, int 
 
 
         // Remove duplicates
-        while (arr[i] == arr[i+1]) {
+        while (i <= end && arr[i] == arr[i+1]) {
             printf("duplicate arr[%d] == arr[%d] == %d\n", i, i+1, arr[i]);
-            i++;
+            ++i;
         }
+        printf("i at end of loop = %d\n", i);
     }
 }
 #endif /* COMBINATION1_HPP */
