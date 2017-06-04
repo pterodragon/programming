@@ -16,6 +16,6 @@ run f = do
 main :: IO ()
 main = do
     putStrLn "include and exclude"
-    run combinations1
+    run combination1
     putStrLn "fix element and recur"
-    run combinations2
+    run combination2
