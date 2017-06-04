@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 
 #include "read_test_case.hpp"
 

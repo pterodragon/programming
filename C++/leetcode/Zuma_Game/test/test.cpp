@@ -13,15 +13,15 @@ template<> const pretty_print::delimiters_values<char> pretty_print::delimiters<
 BOOST_DATA_TEST_CASE(
         test1,
         (make_tests(&read_input, &read_output)),
-        test_pair, expected)
+        test_data)
 {
-    auto filepaths = get_all_test_filepaths();
-    for (const auto& f : filepaths) {
-        cout << f << '\n';
-    }
-    const std::string board = test_pair.first;
-    const std::string hand = test_pair.second;
+    //auto filepaths = get_all_test_filepaths();
+    //for (const auto& f : filepaths) {
+    //    cout << f << '\n';
+    //}
+    const std::string board = test_data.input.first;
+    const std::string hand = test_data.input.second;
     Solution sol;
     int actual = sol.findMinStep(board, hand);
-    BOOST_CHECK_EQUAL(actual, expected);
+    BOOST_CHECK_EQUAL(actual, test_data.output);
 }

@@ -12,6 +12,7 @@
 #include <string>
 #include <array>
 #include <utility>
+#include <iostream>
 
 namespace bdata = boost::unit_test::data;
 namespace bf = boost::filesystem;
@@ -41,29 +42,46 @@ class NumberedTestsFromFiles {
     public:
 
         enum { arity = 1 };
-            typedef decltype(read_input_fn(std::declval<const char *>())) input_type;
-            typedef decltype(read_output_fn(std::declval<const char *>())) output_type;
-            typedef std::tuple<input_type, output_type> test_pair;
+        typedef decltype(read_input_fn(std::declval<const char *>())) input_type;
+        typedef decltype(read_output_fn(std::declval<const char *>())) output_type;
+        struct test_data {
+            bf::path input_path;
+            bf::path output_path;
+            input_type input; // make sure this is operator<< printable
+            output_type output; // make sure this is operator<< printable
+            friend std::ostream& operator<<(std::ostream& out, const test_data& td) {
+                out << "input_path: " << td.input_path << "; ";
+                out << "output_path: " << td.output_path << "; ";
+                out << "input: " << td.input << "; ";
+                out << "output: " << td.output;
+                return out;
+            }
+        };
         struct iterator {
             iterator(const NumberedTestsFromFiles& outer) : outer(outer), test_it(outer.all_test_paths.begin()) {
                 ++*this;
             }
 
-            test_pair operator*() const { 
+            test_data operator*() const { 
                 return t; 
             }
 
             void operator++() {
-                input_type&& input = outer.read_input_fn(test_it->first.string().c_str());
-                output_type&& output = outer.read_output_fn(test_it->second.string().c_str());
-                t = make_pair(input, output);
+                if (test_it == outer.all_test_paths.end()) {
+                    return;
+                }
+                auto input_path = test_it->first;
+                auto output_path = test_it->second;
+                input_type input = outer.read_input_fn(input_path.c_str());
+                output_type output = outer.read_output_fn(output_path.c_str());
+                t = {input_path, output_path, input, output};
                 ++test_it;
             }
 
         private:
             const NumberedTestsFromFiles& outer;
             std::vector<std::pair<bf::path, bf::path>>::const_iterator test_it;
-            test_pair t;
+            test_data t;
         };
 
         NumberedTestsFromFiles(read_input_fn_t read_input_fn, read_output_fn_t read_output_fn)
