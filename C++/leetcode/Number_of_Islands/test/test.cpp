@@ -14,7 +14,7 @@ BOOST_DATA_TEST_CASE(
         test1,
         (make_tests(&read_input, &read_output)),
         // ^ bdata::make( { 1, 2, 3, 5, 8, 13, 21, 35, 56 } ),
-        island_map, expected)
+        test_data)
 {
     // auto filepaths = get_all_test_filepaths();
     // for (const auto& f : filepaths) {
@@ -22,7 +22,7 @@ BOOST_DATA_TEST_CASE(
     // }
     // cout << "island map is " << island_map << '\n';
     Solution sol;
-    auto&& mutable_input = const_cast<vector<vector<char>>&>(island_map);
+    auto&& mutable_input = const_cast<vector<vector<char>>&>(test_data.input);
     int actual = sol.numIslands(mutable_input);
-    BOOST_CHECK_EQUAL(actual, expected);
+    BOOST_CHECK_EQUAL(actual, test_data.output);
 }
