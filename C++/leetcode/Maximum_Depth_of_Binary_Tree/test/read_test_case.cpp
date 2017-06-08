@@ -17,10 +17,15 @@ std::ostream& operator<<(std::ostream& os, TreeNode* node) {
     return os;
 }
 
-TreeNode* read_tree(const std::string& str, int pos, int endp1) {
-    // std::cout << "str.substr = " << str.substr(pos, endp1 - pos + 1) << std::endl;
-    // std::cout << "pos = " << pos << ", endp1 = " << endp1 << std::endl;
-    if (endp1 - pos == 1 && str[pos] == '*') {
+TreeNode* read_tree(const std::string& str, int pos, int& endp1) {
+    // endp1 at most read to this point
+    // after the call, end pos = right after the '}' or '*' of the node
+    // FIXME: delete the whole tree after testing
+    //
+    //std::cout << "str.substr = " << str.substr(pos, endp1 - pos + 1) << std::endl;
+    //std::cout << "pos = " << pos << ", endp1 = " << endp1 << std::endl;
+    if (str[pos] == '*') {
+        endp1 = pos + 1;
         return nullptr;
     }
     if (str[pos] != '{') {
@@ -31,33 +36,25 @@ TreeNode* read_tree(const std::string& str, int pos, int endp1) {
         throw std::invalid_argument("expected ',' not found");
     }
     int val = boost::lexical_cast<int>(str.data() + pos + 1, c1_pos - pos - 1);
+    if (endp1 - c1_pos < 5) { // {1,*,*} at least ",*,*}" to make a node
+        throw std::invalid_argument("invalid syntax after val");
+    }
     //std::cout << "val = " << val << std::endl;
-    auto next_c = [&str](int pos, int endp1, char c) {
-        //cout << "going: ";
-        int lb = 0;
-        while (pos < endp1) {
-            cout << str[pos];
-            if (str[pos] == c && lb == 0) {
-                break;
-            } else if (str[pos] == '{') {
-                ++lb;
-            } else if (str[pos] == '}') {
-                --lb;
-                if (lb < 0) {
-                    throw std::invalid_argument("mismatching braces found");
-                }
-            }
-            ++pos;
-        }
-        if (pos == endp1) {
-            throw std::invalid_argument("expected ',' not found");
-        }
-        return pos;
-    };
-    int c2_pos = next_c(c1_pos + 1, endp1, ',');
-    //std::cout << "c1_pos = " << c1_pos << ", c2_pos = " << c2_pos << std::endl;
-    TreeNode* left = read_tree(str, c1_pos + 1, c2_pos);
-    TreeNode* right = read_tree(str, c2_pos + 1, endp1 - 1);
+    int left_node_end_pos = endp1;
+    TreeNode* left = read_tree(str, c1_pos + 1, left_node_end_pos);
+    if (str[left_node_end_pos] != ',') {
+        throw std::invalid_argument("expected ',' not found");
+    }
+    if (endp1 - left_node_end_pos < 3) { // {1,*,*} at least ",*}" to make a node
+        throw std::invalid_argument("invalid syntax after left child");
+    }
+
+    int right_node_end_pos = endp1;
+    TreeNode* right = read_tree(str, left_node_end_pos + 1, right_node_end_pos);
+    if (str[right_node_end_pos] != '}') { // either *} or }}
+        throw std::invalid_argument("expected '}' not found");
+    }
+    endp1 = right_node_end_pos + 1;
     TreeNode* node = new TreeNode(val);
     node->left = left;
     node->right = right;
@@ -68,6 +65,10 @@ TreeNode* read_input(const char* filepath) {
     ifstream file(filepath);
     std::string line;
     std::getline(file, line);
+    std::cout << "-----" << std::endl;
+    std::cout << "input: " << std::endl;
+    std::cout << line << std::endl;
+    std::cout << "-----" << std::endl;
     int x = line.size();
     return read_tree(line, 0, x);
 }
