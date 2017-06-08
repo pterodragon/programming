@@ -1,5 +1,6 @@
 if [ -d "boost_1_62_0" ]; then
     cd boost_1_62_0 &&
+    ./bootstrap.sh
     ./b2 --with-test --with-filesystem --with-regex --prefix=$(pwd)/build
     cd -
 else
