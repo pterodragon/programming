@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Maximum_Depth_of_Binary_Tree"
+#define BOOST_TEST_MODULE "Same_Tree"
 #include <boost/test/included/unit_test.hpp>
 
 #include "test_common.hpp"
@@ -17,6 +17,6 @@ BOOST_DATA_TEST_CASE(
         test_data)
 {
     Solution sol;
-    int actual = sol.maxDepth(test_data.input);
+    int actual = sol.isSameTree(test_data.input.first, test_data.input.second);
     BOOST_CHECK_EQUAL(actual, test_data.output);
 }
