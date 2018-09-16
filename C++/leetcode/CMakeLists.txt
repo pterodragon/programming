@@ -1,3 +1,5 @@
+project(leetcode)
+
 MACRO(SUBDIRLIST result curdir)
 	FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
 	SET(dirlist "")
@@ -15,8 +17,6 @@ SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 list(FILTER SUBDIRS EXCLUDE REGEX "test_common")
 
 enable_testing ()
-include_directories(${CXX_PRETTYPRINT_DIR})
-include_directories(${Boost_INCLUDE_DIRS})
 
 FOREACH(subdir ${SUBDIRS})
     file(GLOB_RECURSE HEADERS "${subdir}/*.h" "${subdir}/*.hpp")
@@ -39,25 +39,22 @@ FOREACH(subdir ${SUBDIRS})
     get_filename_component(subdirname ${subdir} NAME)
     set(subproject_name ${subdirname})
     add_executable(${subproject_name} ${SOURCES} ${HEADERS})
-    target_link_libraries (${subproject_name}
-       ${Boost_LIBRARIES}
-    )
+
+    target_link_libraries(${subproject_name} ${Boost_LIBRARIES})
+    target_include_directories(${subproject_name} PRIVATE ${CXX_PRETTYPRINT_DIR} ${Boost_INCLUDE_DIRS})
 
     if (TEST_SOURCES)
-        add_library(${subproject_name}_lib_for_tests ${SOURCES} ${HEADERS})
         LIST(APPEND TEST_SOURCES "${test_common_dir}/test_common.cpp")
         set(test_name "${subdirname}_test")
         set(test_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${subdirname}/test")
-        #add_executable(${test_name} ${SOURCES_NO_MAIN} ${HEADERS} ${TEST_SOURCES} ${TEST_HEADERS})
         add_executable(${test_name} ${TEST_SOURCES} ${TEST_HEADERS})
-        target_include_directories (${test_name} PRIVATE
-            ${test_common_dir}
-            ${subdirname}
+        target_include_directories(${test_name} PRIVATE
+            ${test_common_dir} ${subdirname} ${CXX_PRETTYPRINT_DIR} ${Boost_INCLUDE_DIRS}
         )
+
         target_link_libraries (${test_name}
            ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
            ${Boost_LIBRARIES}
-           ${subproject_name}_lib_for_tests
         )
         add_test (NAME ${test_name}
             COMMAND "$<TARGET_FILE:${test_name}>"
