@@ -24,9 +24,6 @@ FOREACH(subdir ${SUBDIRS})
     list(FILTER HEADERS EXCLUDE REGEX "${subdir}/test/.*")
     list(FILTER SOURCES EXCLUDE REGEX "${subdir}/test/.*")
 
-    set(SOURCES_NO_MAIN ${SOURCES})
-    list(FILTER SOURCES_NO_MAIN EXCLUDE REGEX "${subdir}/main.cpp")
-
     file(GLOB_RECURSE TEST_HEADERS 
         "${subdir}/test/*.h"
         "${subdir}/test/*.hpp"
