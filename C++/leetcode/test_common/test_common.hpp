@@ -19,8 +19,8 @@ namespace bf = boost::filesystem;
 using namespace std::string_literals;
 
 struct TestFilePaths {
-    bf::path input_path;
-    bf::path output_path;
+  bf::path input_path;
+  bf::path output_path;
 };
 
 namespace std {
@@ -69,8 +69,10 @@ public:
       if (test_it == outer.all_test_paths.end()) {
         return;
       }
-      input_type input = outer.read_input_fn(test_it->input_path.string().c_str());
-      output_type output = outer.read_output_fn(test_it->output_path.string().c_str());
+      input_type input =
+          outer.read_input_fn(test_it->input_path.string().c_str());
+      output_type output =
+          outer.read_output_fn(test_it->output_path.string().c_str());
       m_currDataPair = {*test_it, input, output};
       ++test_it;
     }
