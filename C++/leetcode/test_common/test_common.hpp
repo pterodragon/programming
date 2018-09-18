@@ -18,13 +18,18 @@ namespace bdata = boost::unit_test::data;
 namespace bf = boost::filesystem;
 using namespace std::string_literals;
 
+struct TestFilePaths {
+    bf::path input_path;
+    bf::path output_path;
+};
+
 namespace std {
 template <> struct hash<bf::path> {
   size_t operator()(const bf::path &p) const { return bf::hash_value(p); }
 };
 } // namespace std
 
-std::vector<std::pair<bf::path, bf::path>>
+std::vector<TestFilePaths>
 get_all_test_filepaths(const bf::path &target_path = bf::current_path(),
                        const std::string &input_prefix = "input",
                        const std::string &output_prefix = "output");
@@ -34,20 +39,19 @@ class NumberedTestsFromFiles {
 private:
   read_input_fn_t read_input_fn;
   read_output_fn_t read_output_fn;
-  std::vector<std::pair<bf::path, bf::path>> all_test_paths;
+  std::vector<TestFilePaths> all_test_paths;
 
 public:
   enum { arity = 1 };
   typedef decltype(read_input_fn(std::declval<const char *>())) input_type;
   typedef decltype(read_output_fn(std::declval<const char *>())) output_type;
   struct test_data {
-    bf::path input_path;
-    bf::path output_path;
+    TestFilePaths test_fp;
     input_type input;   // make sure this is operator<< printable
     output_type output; // make sure this is operator<< printable
     friend std::ostream &operator<<(std::ostream &out, const test_data &td) {
-      out << "input_path: " << td.input_path << "; ";
-      out << "output_path: " << td.output_path << "; ";
+      out << "input_path: " << td.test_fp.input_path << "; ";
+      out << "output_path: " << td.test_fp.output_path << "; ";
       out << "input: " << td.input << "; ";
       out << "output: " << td.output;
       return out;
@@ -65,17 +69,15 @@ public:
       if (test_it == outer.all_test_paths.end()) {
         return;
       }
-      auto input_path = test_it->first;
-      auto output_path = test_it->second;
-      input_type input = outer.read_input_fn(input_path.c_str());
-      output_type output = outer.read_output_fn(output_path.c_str());
-      m_currDataPair = {input_path, output_path, input, output};
+      input_type input = outer.read_input_fn(test_it->input_path.string().c_str());
+      output_type output = outer.read_output_fn(test_it->output_path.string().c_str());
+      m_currDataPair = {*test_it, input, output};
       ++test_it;
     }
 
   private:
     const NumberedTestsFromFiles &outer;
-    std::vector<std::pair<bf::path, bf::path>>::const_iterator test_it;
+    std::vector<TestFilePaths>::const_iterator test_it;
     test_data m_currDataPair;
   };
 

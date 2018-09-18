@@ -6,13 +6,13 @@
 
 namespace bf = boost::filesystem;
 
-std::vector<std::pair<bf::path, bf::path>>
+std::vector<TestFilePaths>
 get_all_test_filepaths(const bf::path &target_path,
                        const std::string &input_prefix,
                        const std::string &output_prefix) {
   std::unordered_set<bf::path> input_paths;
   std::unordered_set<bf::path> output_paths;
-  std::vector<std::pair<bf::path, bf::path>> input_output_filepath_pairs;
+  std::vector<TestFilePaths> input_output_filepath_pairs;
   typedef bf::directory_iterator d_it;
   d_it end_itr;
   auto input_paths_regex = boost::regex(input_prefix + R"_(.*\.txt)_"s);
