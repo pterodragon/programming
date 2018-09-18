@@ -1,23 +1,21 @@
 #ifndef SOLUTION_HPP
-#define SOLUTION_HPP 
+#define SOLUTION_HPP
 
-#include <vector>
 #include <algorithm>
-#include <numeric>
 #include <iterator>
+#include <numeric>
+#include <vector>
 
 using namespace std;
 
 class NumArray {
 public:
-    vector<int> psum;
-    NumArray(vector<int> nums) {
-        partial_sum(begin(nums), end(nums), back_inserter(psum));
-    }
-    
-    int sumRange(int i, int j) {
-        return psum[j] - (i > 0 ? psum[i - 1] : 0);
-    }
+  vector<int> psum;
+  NumArray(vector<int> nums) {
+    partial_sum(begin(nums), end(nums), back_inserter(psum));
+  }
+
+  int sumRange(int i, int j) { return psum[j] - (i > 0 ? psum[i - 1] : 0); }
 };
 
 /**
