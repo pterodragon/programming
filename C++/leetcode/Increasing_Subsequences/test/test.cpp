@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Increasing_Subsequences"
+#define BOOST_TEST_MAIN
 #include <boost/functional/hash.hpp>
 #include <boost/range/irange.hpp>
 #include <boost/test/included/unit_test.hpp>

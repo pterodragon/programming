@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Number_of_Islands_test"
+#define BOOST_TEST_MAIN
 #include <boost/test/included/unit_test.hpp>
 
 #include "read_test_case.hpp"

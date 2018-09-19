@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Pacific_Atlantic_Water_Flow"
+#define BOOST_TEST_MAIN
 
 #include <boost/test/included/unit_test.hpp>
 #include <iostream>

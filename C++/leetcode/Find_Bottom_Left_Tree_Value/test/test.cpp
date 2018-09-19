@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Find_Bottom_Left_Tree_Value"
+#define BOOST_TEST_MAIN
 #include <boost/test/included/unit_test.hpp>
 
 #include "read_test_case.hpp"

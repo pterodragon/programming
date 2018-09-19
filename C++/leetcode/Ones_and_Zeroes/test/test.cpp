@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Ones_and_Zeroes"
+#define BOOST_TEST_MAIN
 #include <boost/test/included/unit_test.hpp>
 #include <tuple>
 
