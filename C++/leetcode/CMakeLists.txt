@@ -19,19 +19,15 @@ list(FILTER SUBDIRS EXCLUDE REGEX "test_common")
 enable_testing ()
 
 FOREACH(subdir ${SUBDIRS})
-    file(GLOB_RECURSE HEADERS "${subdir}/*.h" "${subdir}/*.hpp")
-    file(GLOB_RECURSE SOURCES "${subdir}/*.cpp")
-    list(FILTER HEADERS EXCLUDE REGEX "${subdir}/test/.*")
-    list(FILTER SOURCES EXCLUDE REGEX "${subdir}/test/.*")
+    file(GLOB HEADERS "${subdir}/*.h" "${subdir}/*.hpp")
+    file(GLOB SOURCES "${subdir}/*.cpp")
 
     file(GLOB_RECURSE TEST_HEADERS 
         "${subdir}/test/*.h"
         "${subdir}/test/*.hpp"
         "${test_common_dir}/test_common.hpp"
         )
-    file(GLOB_RECURSE TEST_SOURCES 
-        "${subdir}/test/*.cpp"
-        )
+    file(GLOB_RECURSE TEST_SOURCES "${subdir}/test/*.cpp")
     file(GLOB_RECURSE TEST_FILES "${subdir}/test/*.txt")
     get_filename_component(subdirname ${subdir} NAME)
     set(subproject_name ${subdirname})
@@ -39,6 +35,9 @@ FOREACH(subdir ${SUBDIRS})
 
     target_link_libraries(${subproject_name} ${Boost_LIBRARIES})
     target_include_directories(${subproject_name} PRIVATE ${CXX_PRETTYPRINT_DIR} ${Boost_INCLUDE_DIRS})
+    set_target_properties(${subproject_name} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${subdirname}"
+    )
 
     if (TEST_SOURCES)
         LIST(APPEND TEST_SOURCES "${test_common_dir}/test_common.cpp")
@@ -60,15 +59,10 @@ FOREACH(subdir ${SUBDIRS})
         set_target_properties(${test_name} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${test_output_dir}
         )
-        set_property(TEST ${test_name}
-            PROPERTY LABELS ${test_name}
-        )
         FOREACH(test_file ${TEST_FILES})
+            message("test_file ${test_file}")
             get_filename_component(test_file_name ${test_file} NAME)
             configure_file(${test_file} "${test_output_dir}/${test_file_name}" COPYONLY)
         ENDFOREACH()
     endif()
-    set_target_properties(${subdirname} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${subdirname}"
-    )
 ENDFOREACH()
