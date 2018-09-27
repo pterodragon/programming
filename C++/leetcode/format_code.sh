@@ -1,3 +1,3 @@
 for file in $(find . -name "*.hpp" -o -name "*.cpp"); do 
-    clang-format -i $file
+    clang-format -style="{IndentWidth: 2}" -i $file
 done

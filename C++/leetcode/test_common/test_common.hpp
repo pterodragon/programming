@@ -8,6 +8,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <array>
+#include <exception>
 #include <iostream>
 #include <string>
 #include <tuple>
@@ -69,11 +70,18 @@ public:
       if (test_it == outer.all_test_paths.end()) {
         return;
       }
-      input_type input =
-          outer.read_input_fn(test_it->input_path.string().c_str());
-      output_type output =
-          outer.read_output_fn(test_it->output_path.string().c_str());
-      m_currDataPair = {*test_it, input, output};
+      std::string f;
+      try {
+        f = test_it->input_path.string();
+        input_type input =
+            outer.read_input_fn(test_it->input_path.string().c_str());
+        f = test_it->output_path.string();
+        output_type output =
+            outer.read_output_fn(test_it->output_path.string().c_str());
+        m_currDataPair = {*test_it, input, output};
+      } catch (std::exception &e) {
+        throw std::invalid_argument(f + ": " + e.what());
+      }
       ++test_it;
     }
 
