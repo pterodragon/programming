@@ -47,7 +47,7 @@ pair<TreeNode *, TreeNode *> read_input(const char *filepath) {
   if (file.get() != '\n')
     throw ParseError("no new line after first tree");
   TreeNode *q = read_tree(file);
-  return make_pair(p, q);
+  return {p, q};
 }
 
 int read_output(const char *filepath) {
