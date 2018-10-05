@@ -3,9 +3,12 @@
 
 #include <iostream>
 #include <vector>
+#include <stdexcept>
 
 #include "solution.hpp"
 using namespace std;
+
+using ParseError = std::invalid_argument;
 
 std::ostream &operator<<(std::ostream &os, TreeNode *node);
 TreeNode *read_input(const char *filepath);
