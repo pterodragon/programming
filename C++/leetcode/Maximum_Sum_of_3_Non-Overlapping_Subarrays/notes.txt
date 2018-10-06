@@ -1,0 +1,26 @@
+nums, k
+[1,2,1,2,6,7,5,1], 2
+3 non overlapping arrays of length k, max sum; Find the 3 indices
+
+## Brute force
+no. of possible sums (overlapping)
+k = 1
+nC3 ~= n^3 states
+k = 2
+(n-3)C3 ~= n^3 states
+
+repeated too many subarray sums?
+
+## DP
+
+either subarray includes the next index, or it's not
+
+dp[t][i]: max sum (with indices) when t subarrays are selected, each index <= i
+dp[t][i] = max(dp[t - 1][i - k] + sum(nums[i-k..i]), dp[t][i - 1])
+total states = 3 * (n - k + 1)
+ans = max(dp[3][x] for x in [k*3-1..n-k])
+
+
+### scratch
+no. of possible 1 subarray sum = n - k + 1 -> precomputed table possible
+
