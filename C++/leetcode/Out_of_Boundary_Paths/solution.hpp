@@ -24,9 +24,9 @@ public:
     // dp[x][y][n] = no of paths to move the ball out of grid boundary at
     // (x, y) with n times of moving
     const int mod = 1000000007;
-    int dp[m][n] = {};
+    vector<vector<int>> dp(m, vector(n, 0));
     for (int a = 0; a < N; ++a) {
-      int t[m][n] = {};
+      vector<vector<int>> t(m, vector(n, 0));
       for (int x = 0; x < m; ++x) {
         for (int y = 0; y < n; ++y) {
           if (x > 0)
