@@ -1,0 +1,33 @@
+nums = [7,2,5,10,8]
+m = 2
+
+# approach 1
+wrong ans:
+
+dp[N][m][2]
+ans is dp[n - 1][m - 1][0]
+
+dp[a][q][0] = minimized largest sum of q+1 subarrays of nums[0..a], q >= 0
+dp[a][q][1] = sum of the last array when minimized largest sum of q+1 subarrays of nums[0..a] is achieved, q >= 0
+
+
+dp[a][q] = {-inf, -inf}
+dp[a][0] = {sum(nums[0..a]), sum(nums[0..a])}
+dp[0][q] = {nums[0], nums[0]}
+dp[a][q] = min(
+{max(dp[a - 1][q][0], dp[a - 1][q][1] + nums[a]), dp[a - 1][q][1] + nums[a]}, // continue the last array 
+{max(dp[a - 1][q - 1][0], nums[a]), nums[a]}) // new array at the a'th position
+// dp[a][q][1] is automatically minimized lexicographically
+
+// wrong in this case: [10, 5, 13, 4, 8, 4], 2
+// [10, 5 | 13]
+// [10, 5 | 13, 4]
+// [10, 5 | 13, 4, 8]
+// [10, 5 | 13, 4, 8, 4]
+but optimal should be [10, 5, 13 | 4, 8, 4]
+
+# approach 2
+consider the last array length
+dp[a][q] = 
+min_x{max(dp[a - x][q][0], sum(nums[(a - x + 1)..a])), sum(nums[(a - x + 1)..a])} // last array length must be x, x in [1, a - 1]
+
