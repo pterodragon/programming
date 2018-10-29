@@ -2,8 +2,8 @@
 #define READ_TEST_CASE_HPP
 
 #include <iostream>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 #include "solution.hpp"
 using namespace std;

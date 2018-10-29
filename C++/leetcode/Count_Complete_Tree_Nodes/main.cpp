@@ -6,7 +6,7 @@ using namespace std;
 
 int main() {
   Solution sol;
-  TreeNode* a = nullptr;
+  TreeNode *a = nullptr;
   // TreeNode* a = new TreeNode(1);
   // a->left = new TreeNode(2);
   // a->right = new TreeNode(2);

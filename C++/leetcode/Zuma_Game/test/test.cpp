@@ -13,8 +13,8 @@ const pretty_print::delimiters_values<char>
     pretty_print::delimiters<std::vector<std::vector<char>>, char>::values = {
         "||\n ", " :\n ", " \n||"};
 
-BOOST_DATA_TEST_CASE(test1, (NumberedTestsFromFiles(&read_input, &read_output)),
-                     test_data) {
+auto x = NumberedTestsFromFiles(&read_input, &read_output);
+BOOST_DATA_TEST_CASE(test1, x, test_data) {
   // auto filepaths = get_all_test_filepaths();
   // for (const auto& f : filepaths) {
   //    cout << f << '\n';

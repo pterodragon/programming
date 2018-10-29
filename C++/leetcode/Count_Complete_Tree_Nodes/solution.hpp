@@ -14,8 +14,8 @@ struct TreeNode {
 };
 
 class Solution {
- public:
-  int msb(int x) {  // most significant bit, assert x >= 0
+public:
+  int msb(int x) { // most significant bit, assert x >= 0
     unsigned y = x;
     y |= y >> 1;
     y |= y >> 2;
@@ -34,10 +34,11 @@ class Solution {
     return ans;
   }
 
-  bool num_is_node(TreeNode* root, int x) {
+  bool num_is_node(TreeNode *root, int x) {
     unsigned m = msb(x);
     while (m >>= 1) {
-      if (!root) return false;
+      if (!root)
+        return false;
       if (m & x) {
         root = root->right;
       } else {
@@ -48,11 +49,13 @@ class Solution {
   }
 
   int countNodes(TreeNode *root) {
-    if (!root) return 0;
+    if (!root)
+      return 0;
     int h = height(root);
-    int l = 1 << h; // min node count
+    int l = 1 << h;                 // min node count
     int r = ((unsigned)l << 1) - 1; // max node count
-    if (num_is_node(root, r)) return r;
+    if (num_is_node(root, r))
+      return r;
     while (l < r) {
       int m = (l + r + 1) / 2;
       if (num_is_node(root, m)) {

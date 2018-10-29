@@ -12,11 +12,10 @@ using namespace std;
 struct Input {
   vector<int> arr;
   int m;
-  friend ostream& operator<<(ostream& os, const Input& input) {
+  friend ostream &operator<<(ostream &os, const Input &input) {
     return os << '(' << input.arr << ", " << input.m << ')';
   }
 };
-
 
 using ParseError = std::invalid_argument;
 

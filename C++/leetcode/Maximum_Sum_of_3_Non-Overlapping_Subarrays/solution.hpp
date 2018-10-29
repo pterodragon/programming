@@ -8,8 +8,8 @@
 using namespace std;
 
 class Solution {
- public:
-  vector<int> maxSumOfThreeSubarrays(vector<int>& nums, int k) {
+public:
+  vector<int> maxSumOfThreeSubarrays(vector<int> &nums, int k) {
     auto arrsum = [&nums](int a, int b) {
       return accumulate(begin(nums) + a, begin(nums) + b, 0);
     };

@@ -8,17 +8,18 @@ using namespace std;
 // Definition for a binary tree node.
 struct TreeNode {
   int val;
-  TreeNode* left;
-  TreeNode* right;
+  TreeNode *left;
+  TreeNode *right;
   TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 };
 
 class Solution {
- public:
+public:
   vector<vector<int>> m_ans;
   int req = 0;
-  void dfs(TreeNode* node, int sum, vector<int>& path) {
-    if (!node) return;
+  void dfs(TreeNode *node, int sum, vector<int> &path) {
+    if (!node)
+      return;
     if (!(node->left || node->right)) {
       if (sum + node->val == req) {
         path.push_back(node->val);
@@ -32,7 +33,7 @@ class Solution {
     dfs(node->right, sum + node->val, path);
     path.pop_back();
   }
-  vector<vector<int>> pathSum(TreeNode* root, int sum) {
+  vector<vector<int>> pathSum(TreeNode *root, int sum) {
     if (!root) {
       return {};
     }
