@@ -1,0 +1,23 @@
+A = [0,1,3,5,6,8,12,17]
+2 <= N = len(A) <= 1100
+
+### Observation
+jump length <= N, otherwise it'd be out of range
+
+### attempt
+
+dp[q][a] = can land on q'th stone, last jump is "a" steps
+
+dp[0][0] = 1
+dp[q][a] = A[q] - A[q - 1] == a ? 
+    OR(dp[q - 1][a - 1], dp[q - 1][a], dp[q - 1][a + 1]) :
+    0
+
+for q in [0..N - 1]
+    for a in [1..N - 1]
+        dp[q][a] = A[q] - A[q - 1] == a ? 
+            OR(dp[q - 1][a - 1], dp[q - 1][a], dp[q - 1][a + 1]) :
+            0
+        
+reduce to 1 dimension as only dp[q - 1] is used
+
