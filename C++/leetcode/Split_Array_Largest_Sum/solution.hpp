@@ -10,17 +10,17 @@ using namespace std;
 using P = array<long, 2>;
 
 class Solution {
-public:
-  int splitArray(vector<int> &nums, int m) {
+  // O(n^2, m); a better solution exists
+ public:
+  int splitArray(vector<int>& nums, int m) {
     const int N = nums.size();
-    if (N == 0)
-      return 0;
+    if (N == 0) return 0;
     long inf;
     memset(&inf, 0x3f, sizeof inf);
     vector<vector<P>> dp(N, vector<P>(m, {inf, inf}));
     auto ps = [&dp, &nums](int i, int j) {
       return dp[j][0][0] - dp[i][0][0] + nums[i];
-    }; // partial sum inclusive
+    };  // partial sum inclusive
     int sum = 0;
     for (int a = 0; a < N; ++a) {
       sum += nums[a];
