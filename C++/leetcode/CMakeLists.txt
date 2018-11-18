@@ -19,6 +19,9 @@ list(FILTER SUBDIRS EXCLUDE REGEX "test_common")
 enable_testing ()
 
 FOREACH(subdir ${SUBDIRS})
+    if(NOT EXISTS "${leetcode_dir}/${subdir}/main.cpp")
+        continue()
+    endif()
     file(GLOB HEADERS "${subdir}/*.h" "${subdir}/*.hpp")
     file(GLOB SOURCES "${subdir}/*.cpp")
 

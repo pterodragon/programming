@@ -1,0 +1,10 @@
+S
+len(S) == N
+N <= 2000
+
+### observation
+dp[q] := no. of distinct subsequences of S[0..q]
+count(S, c) := no. of char c in string S
+
+if dp[q] == c
+dp[q] = dp[q - 1] + q - count(S[0..q-1], c)
