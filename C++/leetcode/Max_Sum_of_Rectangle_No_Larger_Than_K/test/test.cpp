@@ -15,11 +15,9 @@ const pretty_print::delimiters_values<char>
 
 auto x = NumberedTestsFromFiles(&read_input, &read_output);
 
-BOOST_DATA_TEST_CASE(test1, x,
-                     // ^ bdata::make( { 1, 2, 3, 5, 8, 13, 21, 35, 56 } ),
-                     test_data) {
+BOOST_DATA_TEST_CASE(test1, x, test_data) {
   Solution sol;
   auto input = test_data.input;
-  auto actual = sol.canCross(const_cast<vector<int>&>(input));
+  auto actual = sol.maxSumSubmatrix(const_cast<vector<vector<int>>&>(input.m), input.k);
   BOOST_CHECK_EQUAL(actual, test_data.output);
 }

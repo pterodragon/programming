@@ -1,6 +1,7 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/included/unit_test.hpp>
 #include <tuple>
+#include <utility>
 
 #include <prettyprint.hpp>
 
@@ -20,6 +21,6 @@ BOOST_DATA_TEST_CASE(test1, x,
                      test_data) {
   Solution sol;
   auto input = test_data.input;
-  auto actual = sol.canCross(const_cast<vector<int>&>(input));
+  auto actual = sol.maxEnvelopes(const_cast<vector<pair<int, int>>&>(input));
   BOOST_CHECK_EQUAL(actual, test_data.output);
 }

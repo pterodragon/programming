@@ -1,0 +1,16 @@
+A = [[5,4],[6,4],[6,7],[2,3]]
+A[q] = (width, height)
+
+### idea
+lexicographical sort
+A = [[1,7],[2,5],[2,10],[2,15],[3,1],[3,4],[3,6],[3,8],[4,1],[4,4]]
+
+f(q, w) := A[q][0] < A[w][0] and A[q][1] < A[w][1]
+max_fit(q, w) := f(q, w) == 1 and with the max A[q][1] for the same A[q][0]
+
+dp[q] = max envelopes chain when A[0..q] is considered, A[q] has to be included
+anwser = max_q(dp[q])
+
+dp[q] = 1 + max_z(dp[z]) // where max_fit(z, q)
+
+### observation
