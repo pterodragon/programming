@@ -100,7 +100,7 @@ class SuffixTree {
   // transitions; g[s][i] = {k, p, r}
   // -> state#s 't[i]'-transition is
   // g(s, (k, p)) = r
-  // where t[k] = t[0]
+  // where t[k] = t[i]
   //
   // to save space, using a map/hash is also possible
   vector<array<GT, Alph> > g;
