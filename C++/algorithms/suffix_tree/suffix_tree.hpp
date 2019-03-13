@@ -35,7 +35,7 @@ class SuffixTree {
   // This implementation uses 2 * n + 1 for the bounds,
   // + 1 just to guard the empty string case
   SuffixTree(string_view sv)
-      : n(sv.length()), g(2 * n + 1), f(2 * n + 1), t(sv), q_count(2) {
+      : t(sv), n(sv.length()), q_count(2), f(2 * n + 1), g(2 * n + 1) {
     algorithm2();
   }
 
