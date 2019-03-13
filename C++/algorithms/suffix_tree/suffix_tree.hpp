@@ -76,7 +76,6 @@ class SuffixTree {
       g[r][t[kp + p - k + 1] - SC] = {kp + p - k + 1, pp, sp};
       return {false, r};
     }
-    auto [kpp, ppp, spp] = g[s][t_ - SC];
     return {g[s][t_ - SC] != GT{}, s};
   }
 
