@@ -1,8 +1,8 @@
 #include <algorithm>
+#include <array>
 #include <functional>
 #include <numeric>
 #include <vector>
-#include <array>
 
 using namespace std;
 
@@ -10,8 +10,8 @@ template <typename T, int S = 1 << (sizeof(T) * 8)>
 void counting_sort_inplace(vector<T>& v) {
   array<int, S> c{};
   for (auto const& e : v) ++c[e];
-  v.clear();
-  for (int q = 0; q < S; ++q) fill_n(back_inserter(v), c[q], q);
+  auto it = begin(v);
+  for (auto const& e : c) it = fill_n(it, c[e], e);
 }
 
 // stable sort the collection based on f(e) for e in v
@@ -19,18 +19,19 @@ void counting_sort_inplace(vector<T>& v) {
 // return vector of original indices
 template <typename T, typename Func,
           int S = 1 << (sizeof(result_of_t<Func(T)>) * 8)>
-vector<T> counting_sort(vector<T>& v, Func f) {
+vector<T> counting_sort(const vector<T>& v, Func f) {
   array<int, S> c{};
   for (auto const& e : v) ++c[f(e)];
   partial_sum(begin(c), end(c), begin(c));
   vector<T> res(v.size());
-  for (int q = v.size(); q > 0; --q) res[--c[f(v[q - 1])]] = v[q - 1]; 
+  for (int q = v.size() - 1; q >= 0 && q < v.size(); --q)
+    res[--c[f(v[q])]] = v[q];
   return res;
 }
 
 template <typename T, typename Func,
           int S = 1 << (sizeof(result_of_t<Func(T)>) * 8)>
-vector<T> counting_sort2(vector<T>& v, Func f) {
+vector<T> counting_sort2(const vector<T>& v, Func f) {
   array<int, S> c{};
   for (auto const& e : v) ++c[f(e)];
   for (int q = 0, sum = 0; q < S; ++q) {
@@ -39,6 +40,6 @@ vector<T> counting_sort2(vector<T>& v, Func f) {
     sum += t;
   }
   vector<T> res(v.size());
-  for (int q = 0; q < v.size(); ++q) res[c[f(v[q])]++] = v[q]; 
+  for (int q = 0; q < v.size(); ++q) res[c[f(v[q])]++] = v[q];
   return res;
 }

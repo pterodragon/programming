@@ -1,30 +1,28 @@
-#include "counting_sort.hpp"
 #include <iostream>
+#include "counting_sort.hpp"
 
 int main() {
   string str = "hellozzaz";
   vector strv(begin(str), end(str));
   counting_sort_inplace(strv);
-  for (auto c: strv) cout << c << ' '; 
+  for (auto c : strv) cout << c << ' ';
   cout << '\n';
 
-  vector vstr{"adc", "bad", "cba", "dcb"};
-  auto cs = [&vstr](int idx) {
-    return counting_sort(vstr, [idx](auto const& str) { return str[idx]; } );
-  };
-  auto cs2 = [&vstr](int idx) {
-    return counting_sort2(vstr, [idx](auto const& str) { return str[idx]; } );
-  };
-  for (size_t i = 0; i < 3; ++i) {
-    for (auto const& e: cs(i)) {
-      cout << e << '\t';
-    }
-    cout << '\n';
+  vector<string> vstr(27, "aaa");
+  for (int q = 0; q < 3; ++q)
+    for (int w = 0; w < 3; ++w)
+      for (int e = 0; e < 3; ++e)
+          vstr[q + w * 3 + e * 9][0] += q,
+              vstr[q + w * 3 + e * 9][1] += w,
+              vstr[q + w * 3 + e * 9][2] += e;
+  // radix sort
+  for (int i = 0; i <= 2; ++i) {
+    vstr = counting_sort(vstr, [i](auto const& str) { return str[i]; });
   }
-  for (size_t i = 0; i < 3; ++i) {
-    for (auto const& e: cs2(i)) {
-      cout << e << '\t';
-    }
-    cout << '\n';
+  for (auto s: vstr) cout << s << '\n';
+  cout << '\n';
+  for (int i = 2; i >= 0; --i) {
+    vstr = counting_sort2(vstr, [i](auto const& str) { return str[i]; });
   }
+  for (auto s: vstr) cout << s << '\n';
 }
