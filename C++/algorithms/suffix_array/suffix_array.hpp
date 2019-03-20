@@ -39,9 +39,11 @@ class SuffixArray {
   }
 
   void print() const;
+  int binary_search(string_view sv) const;
 
  private:
   // stable sort is necessary
+  // using std::stable_sort to skip this but increase complexity
   void counting_sort(int k) {
     c.fill(0);
     for (int i = 0; i < n; ++i) ++c[i + k < n ? ra[i + k] : 0];
@@ -55,11 +57,11 @@ class SuffixArray {
   void construct() {
     copy(begin(sv), end(sv), begin(ra));
     iota(begin(sa), end(sa), 0);
-    for (int k = 1; k < n; k <<= 1) {  // rerank
+    for (int k = 1; k < n; k <<= 1) {
       counting_sort(k);
       counting_sort(0);
       temp[sa[0]] = 0;
-      for (int i = 1, r = 0; i < n; ++i) {
+      for (int i = 1, r = 0; i < n; ++i) {  // rerank
         r += ra[sa[i]] != ra[sa[i - 1]] || ra[sa[i] + k] != ra[sa[i - 1] + k];
         temp[sa[i]] = r;
       }
