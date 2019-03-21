@@ -11,7 +11,7 @@ using namespace std;
 
 // https://gist.github.com/markormesher/7e3b39028f7e7237b098ebf35dcd6545
 /*
- * Prefix doubling
+ * Prefix doubling: O(n log n) construction time
  *
  * s = banana
  * R2[i] = rank of the pair (R1[i], R1[i + 1])
@@ -34,7 +34,7 @@ using namespace std;
  */
 class SuffixArray {
  public:
-  SuffixArray(string_view sv) : sv(sv), n(sv.length()), ra(n), sa(n), temp(n) {
+  SuffixArray(string_view sv) : sv(sv), n(sv.length()), temp(n), ra(n), sa(n) {
     construct();
   }
 
@@ -43,6 +43,8 @@ class SuffixArray {
   vector<int> lcp() const;
   vector<int> plcp() const;
   pair<int, int> lrs() const;
+
+  static pair<int, int> lcs(string_view s1, string_view s2);
 
  private:
   // stable sort is necessary
@@ -73,12 +75,14 @@ class SuffixArray {
     }
   }
 
-  string_view sv;
-  int n;
+  const string_view sv;
+ public:
+  const int n;
+ private:
   array<int, 256> c;
+  vector<int> temp;
   vector<int> ra; // rank array
   vector<int> sa; // suffix array
-  vector<int> temp;
 };
 
 #endif /* SUFFIX_ARraY_HPP */
