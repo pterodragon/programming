@@ -40,6 +40,9 @@ class SuffixArray {
 
   void print() const;
   int binary_search(string_view sv) const;
+  vector<int> lcp() const;
+  vector<int> plcp() const;
+  pair<int, int> lrs() const;
 
  private:
   // stable sort is necessary
