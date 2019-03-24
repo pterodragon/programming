@@ -1,147 +1,72 @@
+/*
+ * Reference: https://codeforces.com/blog/entry/16780
+ */
 #ifndef SUFFIX_TREE2_HPP
 #define SUFFIX_TREE2_HPP
 
-#define debug_print(x) cout << #x << ": " << x << '\n'
-
-#include <bits/stdc++.h>
+#include <climits>
+#include <map>
+#include <vector>
 
 using namespace std;
 
-struct ST {
-  const int inf = 1e9;
-  static constexpr int maxn = 30;
-  char s[maxn];
-  vector<map<char, int> > to;
-  int len[maxn] = {}, ffpos[maxn] = {}, link[maxn] = {};
-  int node = 0, pos = 0;
-  int sz = 1, n = 0;
+class SuffixTree2 {
+  using state = unsigned;
 
-  ST(string s) : to(maxn) {
-    len[0] = inf;
-    for (int i = 0; i < s.size(); i++) {
-      // cout << "#################### i = " << i << "\n";
-      add_letter(s[i]);
-    }
-    // This calculates total length of all edges
-    int ans = 0;
-    for (int i = 1; i < sz; i++) ans += min((int)s.size() - ffpos[i], len[i]);
-    // cout << ans << "\n";
+  string_view s;
+  const unsigned N;
+  static constexpr const unsigned ROOT = 0, INF = UINT_MAX;
+  vector<map<char, state> > g; // transitions // use array for O(n) build time
+  vector<unsigned> f;  // suffix links // doesn't matter what f[0] is
+  struct RP {
+    unsigned lp = 0, len = INF;
+  };
+  vector<RP> rps;  // rps[v]: left pointer, len from non-self closest ancestor
+  state q = 1;
+
+ public:
+  void print() const;
+
+  SuffixTree2(string_view s)
+      : s(s), N(s.size()), g(2 * N + 1), f(2 * N + 1), rps(2 * N + 1) {
+    for (unsigned i = 0, actl = 1, actn = 0; i < N; ++i, ++actl)
+      update(i, actn, actl);  // active node, active length
   }
 
-  int make_node(int _pos, int _len) {
-    ffpos[sz] = _pos;
-    len[sz] = _len;
-    return sz++;
-  }
-
-  void go_edge() {  // canonize? (node, (ffpos[node], ffpos[node] + pos - 1))?
-                    // is a canonical reference pair
-    while (pos > len[to[node][s[n - pos]]]) {
-      node = to[node][s[n - pos]];
-      pos -= len[node];
-    }
-  }
-
-  void add_letter(char c) {
-    s[n++] = c;
-    pos++;  // active length?
+  void update(unsigned i, unsigned& actn, unsigned& actl) {
     int last = 0;
-    while (pos > 0) {
-      // cout << "c: " << c << "; n: " << n << "; pos: " << pos << "; node: " << node << "; last: " << last << '\n';
-      go_edge();
-      char edge = s[n - pos];  // 'edge'-transition
-      // cout << "edge: " << edge << '\n';
-      int& v = to[node][edge];  // active point
-      // cout << "v: " << v << '\n';
-      char t = s[ffpos[v] + pos - 1];  // character of the active point
-      // cout << "t: " << t << '\n';
-      // cout << "---\n";
-      if (v == 0) {
-        // cout << "@@@ v == 0\n";
-        v = make_node(n - pos, inf);  // new active point is v // v is ref
-        link[last] = node;
-        last = 0;
-      } else if (t == c) {
-        // cout << "@@@ t == c \n";
-        link[last] = node;
+    while (actl > 0) {
+      while (actl > rps[g[actn][s[i - actl + 1]]].len) {  // canonize
+        actn = g[actn][s[i - actl + 1]];
+        actl -= rps[actn].len;
+      }
+      unsigned& v = g[actn][s[i - actl + 1]];  // 't'-transition from actn
+      char next = s[rps[v].lp + actl - 1];  // char right after "active point"
+      if (v == 0) {  // implies actl == 1 ;  no such 't'-transition
+        rps[v = q++] = {i - actl + 1, INF};
+        f[last] = actn;
+        last = ROOT;  // prevent modifying f[last]; split won't happen after
+      } else if (next == s[i]) {  // extend active length
+        f[last] = actn;
         return;
       } else {
-        // cout << "@@@ other\n";
-        int u = make_node(ffpos[v], pos - 1);
-        to[u][c] = make_node(n - 1, inf);
-        to[u][t] = v;
-        ffpos[v] +=
-            pos - 1;  // update the ancestor to be position of new node (u)
-        len[v] -= pos - 1;  // update length from ancestor
-        v = u;              // node' edge-transition is now to u
-        link[last] = u;
+        unsigned u = q;
+        rps[q++] = {rps[v].lp, actl - 1};
+        g[u][s[i]] = q;
+        rps[q++] = {i, INF};
+        g[u][next] = v;
+        rps[v].lp += actl - 1;   // ancestor lp is now position of new node (u)
+        rps[v].len -= actl - 1;  // update length from ancestor
+        v = u;                   // actn's 't'-transition is now to u
+        f[last] = u;
         last = u;
       }
-      if (node == 0)
-        pos--;
+      if (actn == ROOT)
+        --actl;
       else
-        node = link[node];
-    }
-  }
-
-  void print2() {
-    cout << "f: ";
-    for (int i = 0; i < sz; ++i) {
-      if (len[i] < inf / 2) printf("f[%d] = %d | ", i, link[i]);
-    }
-    cout << '\n';
-    cout << "g: ";
-    for (int i = 0; i < sz; ++i) {
-      for (auto [k, v] : to[i]) {
-        // printf("[%c -> %d] ", k, v);
-        printf("g(%d, [%c](%d, %d)) = %d | ", i, k, ffpos[v], (len[v] > inf / 2) ? n - 1 : (ffpos[v] + len[v] - 1), v);
-      }
-    }
-    cout << '\n';
-    // cout << "ffpos: \n";
-    // for (int i = 0; i < sz; ++i) cout << setw(2) << ffpos[i] << ' ';
-    // cout << '\n';
-    // cout << "link: \n";
-    // for (int i = 0; i < sz; ++i) cout << setw(2) << link[i] << ' ';
-    // cout << '\n';
-    // cout << "len: \n";
-    // for (int i = 0; i < sz; ++i) cout << setw(2) << (len[i] > inf / 2 ? -1 :
-    // len[i]) << ' '; cout << '\n'; for (int i = 0; i < sz; ++i) {
-    //   printf("to[%d]: ", i);
-    //   for (auto [k, v] : to[i]) {
-    //     printf("[%c -> %d] ", k, v);
-    //   }
-    //   cout << '\n';
-    // }
-  }
-
-  void print() {
-    for (int i = 0; i < sz; ++i) cout << setw(2) << i << ' ';
-    cout << '\n';
-    cout << "ffpos: \n";
-    for (int i = 0; i < sz; ++i) cout << setw(2) << ffpos[i] << ' ';
-    cout << '\n';
-    cout << "link: \n";
-    for (int i = 0; i < sz; ++i) cout << setw(2) << link[i] << ' ';
-    cout << '\n';
-    cout << "len: \n";
-    for (int i = 0; i < sz; ++i)
-      cout << setw(2) << (len[i] > inf / 2 ? -1 : len[i]) << ' ';
-    cout << '\n';
-    for (int i = 0; i < sz; ++i) {
-      printf("to[%d]: ", i);
-      for (auto [k, v] : to[i]) {
-        printf("[%c -> %d] ", k, v);
-      }
-      cout << '\n';
+        actn = f[actn];
     }
   }
 };
-
-int main(int argc, char** argv) {
-  ST st(argv[1]);
-  // st.print();
-  st.print2();
-}
 
 #endif /* SUFFIX_TREE2_HPP */

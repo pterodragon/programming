@@ -22,8 +22,7 @@ using GT = tuple<int, int, state>;
 // AlphabetSize (default is small letters); SC = Start char
 template <int Alph = 26, char SC = 'a'>
 class SuffixTree {
-  static constexpr int BOTTOM = 0;
-  static constexpr int ROOT = 1;
+  static const constexpr int BOTTOM = 0, ROOT = 1;
 
  public:
   void print() const;
@@ -35,7 +34,7 @@ class SuffixTree {
   // This implementation uses 2 * n + 1 for the bounds,
   // + 1 just to guard the empty string case
   SuffixTree(string_view sv)
-      : t(sv), n(sv.length()), q_count(2), f(2 * n + 1), g(2 * n + 1) {
+      : t(sv), N(sv.length()), q_count(2), f(2 * N + 1), g(2 * N + 1) {
     algorithm2();
   }
 
@@ -43,10 +42,9 @@ class SuffixTree {
   void algorithm2() {
     // XXX: CAUTION! string is now 0 indexed, i and k should start from 0
     // and max string index = n - 1
-    int s = ROOT, k = 0;
     for (int j = 0; j < Alph; ++j) g[BOTTOM][j] = {-j, -j, ROOT};
     f[ROOT] = BOTTOM;
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0, s = ROOT, k = 0; i < N; ++i) {
       tie(s, k) = update(s, k, i);
       tie(s, k) = canonize(s, k, i);
     }
@@ -56,7 +54,7 @@ class SuffixTree {
     int oldr = ROOT;
     auto [is_end_point, r] = test_and_split(s, k, i - 1, t[i]);
     while (!is_end_point) {
-      g[r][t[i] - SC] = {i, n - 1, q_count++};
+      g[r][t[i] - SC] = {i, N - 1, q_count++};
       if (oldr != ROOT) f[oldr] = r;
       oldr = r;
       tie(s, k) = canonize(f[s], k, i - 1);
@@ -92,8 +90,8 @@ class SuffixTree {
   }
 
   string_view t;
-  int n;  // length of string
-  int q_count; // state indices
+  const int N;  // length of string
+  state q_count; // state indices
   vector<int> f;  // suffix links
 
   // transitions; g[s][i] = {k, p, r}
@@ -108,12 +106,12 @@ class SuffixTree {
 template <int Alph, char SC>
 void SuffixTree<Alph, SC>::print() const {
   cout << "f: ";
-  for (int q = 0; q < 2 * n; ++q) {
+  for (int q = 0; q < 2 * N; ++q) {
     if (f[q]) printf("f[%d] = %d | ", q, f[q]);
   }
   cout << '\n';
   cout << "g: ";
-  for (int q = 1; q < 2 * n; ++q) {
+  for (int q = 1; q < 2 * N; ++q) {
     for (int w = 0; w < Alph; ++w) {
       auto tup = g[q][w];
       if (tup != GT{}) {
@@ -124,4 +122,3 @@ void SuffixTree<Alph, SC>::print() const {
   }
   cout << '\n';
 }
-
