@@ -25,6 +25,9 @@ class SuffixTree {
  public:
   void print() const;
   bool has_substr(string_view pat) const;
+  vector<int> search_all(string_view pat) const;
+  string_view lrs() const;
+  string_view lrs_dfs() const;
   // ----------------------------------------
 
   // A suffix tree has at most n - 1 branching states; at most 2 * n - 2
@@ -89,8 +92,8 @@ class SuffixTree {
   }
 
   string_view t;
-  const int N;    // length of string
-  state q_count;  // state indices
+  const int N;      // length of string
+  state q_count;    // state indices
   vector<state> f;  // suffix links
 
   // transitions; g[s][i] = {k, p, r}
@@ -99,7 +102,7 @@ class SuffixTree {
   // where t[k] = t[i]
   //
   // to save space, using a map/hash is also possible
-  vector<array<GT, Alph> > g;
+  vector<array<GT, Alph>> g;
 };
 
 template <int Alph, char SC>
@@ -118,6 +121,94 @@ bool SuffixTree<Alph, SC>::has_substr(string_view pat) const {
     if (i >= pat.size()) return true;
     s = sp;
   };
+}
+
+/*
+ * return all indices of occurrence of pat
+ * return {} if pat is empty
+ *
+ * WARNING: The suffix tree must be built with a string appended with a unique
+ * character. Otherwise this function will return a wrong result
+ */
+template <int Alph, char SC>
+vector<int> SuffixTree<Alph, SC>::search_all(string_view pat) const {
+  if (pat.empty() || !has_substr(pat)) return {};
+  state s = ROOT;
+  int i = 0;
+  auto [kp, pp, sp] = GT{};
+  while (i < (int)pat.size()) {
+    tie(kp, pp, sp) = g[s][pat[i] - SC];
+    i += pp - kp + 1;
+    s = sp;
+  };
+  if (pp == N - 1) return {kp - (i - (pp - kp + 1))};
+
+  vector<int> res;
+  vector<pair<state, int>> q{{sp, i}};
+
+  while (!q.empty()) {  // BFS
+    auto [s, i] = q.back();
+    q.pop_back();
+    for (int c = 0; c < Alph; ++c) {
+      auto [kp, pp, sp] = g[s][c];
+      if (pp == N - 1)
+        res.push_back(kp - i);
+      else if (sp != 0)
+        q.push_back({sp, i + pp - kp + 1});
+    }
+  };
+  return res;
+}
+
+/*
+ * Longest repeated substring
+ *
+ * This returns one of the lrs
+ *
+ * WARNING: The suffix tree must be built with a string appended with a unique
+ * character. Otherwise this function will return a wrong result
+ */
+template <int Alph, char SC>
+string_view SuffixTree<Alph, SC>::lrs() const {
+  using T = tuple<int, int, state>;  // len, idx, state
+  T res{0, 0, ROOT};
+  vector<T> q{res};  // start idx and length
+
+  while (!q.empty()) {  // BFS
+    auto [len, _, s] = q.back();
+    q.pop_back();
+    for (int c = 0; c < Alph; ++c) {
+      auto [kp, pp, sp] = g[s][c];
+      if (pp == N - 1)
+        res = max(res, {len, kp, s});
+      else if (sp != 0)
+        q.push_back({len + pp - kp + 1, kp, sp});
+    }
+  };
+  auto [len, i, _] = res;
+  return t.substr(i - len, len);
+}
+
+/*
+ * Just another lrs implementation by using dfs because you can
+ * and it's shorter
+ *
+ * WARNING: The suffix tree must be built with a string appended with a unique
+ * character. Otherwise this function will return a wrong result
+ */
+template <int Alph, char SC>
+string_view SuffixTree<Alph, SC>::lrs_dfs() const {
+  using T = tuple<int, int, state>;  // len, idx, state
+  auto dfs = [this](T res, auto f) -> T {
+    auto [len, _, s] = res;
+    for (int c = 0; c < Alph; ++c) {
+      if (auto [kp, pp, sp] = g[s][c]; sp != 0)
+        res = max(res, f({len + (pp == N - 1 ? 0 : pp - kp + 1), kp, sp}, f));
+    }
+    return res;
+  };
+  auto [len, i, _] = dfs({0, 0, ROOT}, dfs);
+  return t.substr(i - len, len);
 }
 
 #include <iostream>
