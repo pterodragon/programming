@@ -40,6 +40,7 @@ class Test {
   }
 
   void test_lrs() const {
+    cout << __PRETTY_FUNCTION__ << '\n';
     // compute lrs by dynamic programming
     vector<vector<int>> dp(N, vector<int>(N));
     // dp[i][j]: longest of suffix of s[i:j+1] which is repeating in s
@@ -56,10 +57,29 @@ class Test {
     testcase(st.lrs_dfs(), res_sv);
   }
 
+  void test_lcs() const {
+    cout << __PRETTY_FUNCTION__ << '\n';
+    // check if any substring is the longest common substring with itself
+    string uc(1, 'a' + 27);
+    for (int q = 0; q < N; ++q) {
+      for (int w = q + 1; q + w < N; ++w) {
+        string_view pat(s.data() + q, w);
+        auto arg = string(pat) + uc;
+        auto lcs = SuffixTree<28, 'a'>::lcs(s, arg);
+        testcase(lcs, pat);
+        arg = uc + string(pat) + uc;
+        lcs = SuffixTree<28, 'a'>::lcs(s, arg);
+        testcase(lcs, pat);
+      }
+    }
+    auto lcs = SuffixTree<28, 'a'>::lcs(s, uc);
+    testcase(lcs, "");
+  }
+
   void test_substr() const {
     cout << __PRETTY_FUNCTION__ << '\n';
-    for (int q = 0; q < s.size(); ++q) {
-      for (int w = 1; q + w < s.size(); ++w) {
+    for (int q = 0; q < N; ++q) {
+      for (int w = 1; q + w < N + 1; ++w) {
         string_view pat(s.data() + q, w);
         cout << "pat: " << pat << '\t';
         testcase(st.has_substr(pat), true);
@@ -92,6 +112,7 @@ int main(int argc, char** argv) {
   string y = argv[2] ? argv[2] : "";
 
   if (!x.empty()) {
+    x += "$"; // add unique char
     SuffixTree<256, '\0'> st(x);
     st.print();
     bool ok = st.has_substr(y);
@@ -100,8 +121,11 @@ int main(int argc, char** argv) {
     auto v = st.search_all(y);
     cout << "st '" << x << "' has substring idx of '" << y << "': " << v
          << '\n';
+    y += "#"; // add unique char
     auto lrs = st.lrs();
     cout << "st '" << x << "' has lrs '" << lrs << "'\n";
+    auto lcs = SuffixTree<256, '\0'>::lcs(x, y);
+    cout << "lcs of (" << x << ", " << y << ") is '" << lcs << "'\n";
     return 0;
   }
 
@@ -114,5 +138,15 @@ int main(int argc, char** argv) {
     Test test2(y);
     test2.test_search_all();
     test2.test_lrs();
+    test2.test_lcs();
+  }
+  for (auto [a, b, exp] : {tuple{"azaxzaz", "bcccbbbzabcccbb", "za"},
+                           {"qwerxreqxrqe", "rewqxrqxereq", "qxrq"}}) {
+    string uc(1, 'a' + 27);
+    string uc2(1, 'a' + 28);
+    string a_arg = string(a) + uc;
+    string b_arg = string(b) + uc2;
+    auto lcs = SuffixTree<28, 'a'>::lcs(a_arg, b_arg);
+    testcase(lcs, exp);
   }
 }

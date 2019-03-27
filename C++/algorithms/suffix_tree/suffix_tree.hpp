@@ -28,6 +28,7 @@ class SuffixTree {
   vector<int> search_all(string_view pat) const;
   string_view lrs() const;
   string_view lrs_dfs() const;
+  static string_view lcs(string_view sa, string_view sb);
   // ----------------------------------------
 
   // A suffix tree has at most n - 1 branching states; at most 2 * n - 2
@@ -198,17 +199,56 @@ string_view SuffixTree<Alph, SC>::lrs() const {
  */
 template <int Alph, char SC>
 string_view SuffixTree<Alph, SC>::lrs_dfs() const {
-  using T = tuple<int, int, state>;  // len, idx, state
-  auto dfs = [this](T res, auto f) -> T {
-    auto [len, _, s] = res;
+  using T = tuple<int, int>;  // len, idx
+  auto dfs = [this](T res, state s, auto f) -> T {
+    auto len = get<0>(res);
     for (int c = 0; c < Alph; ++c) {
       if (auto [kp, pp, sp] = g[s][c]; sp != 0)
-        res = max(res, f({len + (pp == N - 1 ? 0 : pp - kp + 1), kp, sp}, f));
+        res = max(res,
+                  pp == N - 1 ? T{len, kp} : f({len + pp - kp + 1, kp}, sp, f));
     }
     return res;
   };
-  auto [len, i, _] = dfs({0, 0, ROOT}, dfs);
+  auto [len, i] = dfs({0, 0}, ROOT, dfs);
   return t.substr(i - len, len);
+}
+
+/*
+ * Longest common substring
+ *
+ * WARNING: The arguments must be strings which have a unique char appended at
+ * the end for each
+ */
+template <int Alph, char SC>
+string_view SuffixTree<Alph, SC>::lcs(string_view sa, string_view sb) {
+  string s = string(sa) + string(sb);
+  SuffixTree st(s);
+  using T = tuple<int, int>;  // len, idx, state
+  using U = pair<int, T>;            // belongs to, T
+  auto dfs = [&st, N_1 = sa.size()](T res, state s, auto f) -> U {
+    auto len = get<0>(res);
+    int b = 0;
+    for (int c = 0; c < Alph; ++c) {
+      if (auto [kp, pp, sp] = st.g[s][c]; sp != 0) {
+        if (kp < N_1 && pp > N_1) pp = N_1 - 1;
+        int z = (pp == st.N - 1) | (pp == N_1 - 1) * 2;
+        if (z) {
+          b |= z;
+          res = max(res, {len, kp});
+        } else {
+          auto [b_recur, res_recur] = f({len + pp - kp + 1, kp}, sp, f);
+          if (b_recur == 3) res = max(res, res_recur);
+          b |= b_recur;
+        }
+      }
+    }
+    return {b, res};
+  };
+  auto [b, res] = dfs({0, 0}, ROOT, dfs);
+  auto [len, i] = res;
+  if (b != 3) return sa.substr(0, 0);
+  bool first = i - len < sa.size();
+  return (first ? sa : sb).substr(i - len - (first ? 0 : sa.size()), len);
 }
 
 #include <iostream>
