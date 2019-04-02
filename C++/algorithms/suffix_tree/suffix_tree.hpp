@@ -7,6 +7,7 @@
 #include <string_view>
 #include <tuple>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -29,6 +30,7 @@ class SuffixTree {
   string_view lrs() const;
   string_view lrs_dfs() const;
   static string_view lcs(string_view sa, string_view sb);
+  static string_view lps(string_view sb);
   // ----------------------------------------
 
   // A suffix tree has at most n - 1 branching states; at most 2 * n - 2
@@ -216,15 +218,16 @@ string_view SuffixTree<Alph, SC>::lrs_dfs() const {
 /*
  * Longest common substring
  *
- * WARNING: The arguments must be strings which have a unique char appended at
- * the end for each
+ * WARNING: SC + Alph - 1 and SC + Alph - 2 will be used as unique characters
  */
 template <int Alph, char SC>
-string_view SuffixTree<Alph, SC>::lcs(string_view sa, string_view sb) {
-  string s = string(sa) + string(sb);
+string_view SuffixTree<Alph, SC>::lcs(string_view sva, string_view svb) {
+  string sa = string(sva) += char(SC + Alph - 1);
+  string sb = string(svb) += char(SC + Alph - 2);
+  string s = sa + sb;
   SuffixTree st(s);
   using T = tuple<int, int>;  // len, idx, state
-  using U = pair<int, T>;            // belongs to, T
+  using U = pair<int, T>;     // belongs to, T
   auto dfs = [&st, N_1 = sa.size()](T res, state s, auto f) -> U {
     auto len = get<0>(res);
     int b = 0;
@@ -248,8 +251,81 @@ string_view SuffixTree<Alph, SC>::lcs(string_view sa, string_view sb) {
   auto [len, i] = res;
   if (b != 3) return sa.substr(0, 0);
   bool first = i - len < sa.size();
-  return (first ? sa : sb).substr(i - len - (first ? 0 : sa.size()), len);
+  return (first ? sva : svb).substr(i - len - (first ? 0 : sa.size()), len);
 }
+
+// #include "prettyprint.hpp"
+// /*
+//  * Longest palindromic substring
+//  *
+//  * WARNING: SC + Alph - 1 and SC + Alph - 2 will be used as unique characters
+//  */
+// template <int Alph, char SC>
+// string_view SuffixTree<Alph, SC>::lps(string_view sva) {
+//   cout << "###\n";
+//   // string sa = string(sva) += char(SC + Alph - 1);
+//   string sa = string(sva) += '#';
+//   string sb;
+//   sb.reserve(sva.size() + 1);
+//   reverse_copy(begin(sva), end(sva), back_inserter(sb));
+//   // sb += char(SC + Alph - 2);
+//   sb += '@';
+//   string s = sa + sb;
+//   SuffixTree st(s);
+//   st.print();
+// 
+//   vector<int> pos;
+//   auto dfs = [&st, &pos, N = s.size(), N_1 = sa.size()](int len, state s, auto f) -> int {
+//     cout << "--------------------\n";
+//     for (int c = 0; c < Alph; ++c) {
+//       if (auto [kp, pp, sp] = st.g[s][c]; sp != 0) {
+//         if (kp < N_1 && pp > N_1) pp = N_1 - 1;
+//         int z = (pp == st.N - 1) | (pp == N_1 - 1) * 2;
+//         cout << "# kp: " << kp << ", len: " << len << '\n';
+//         if (z) {
+//           // res = max(res, {len, kp});
+//           cout << "kp: " << kp << ", len: " << len << '\n';
+//           int kp_other;
+//           if (kp > N_1) {
+//             kp_other = N_1 - 1 - (kp - N_1) + len;
+//             if (pos[kp_other]) {
+//               cout << "pos[" << kp_other << "] = " << pos[kp_other] << '\n';
+//               res = max(res, {len, kp});
+//             } else {
+//               pos[kp] = len;
+//             }
+//           } else {
+//             kp_other = N_1 - 1 - kp + len;
+//             if (pos[kp_other]) {
+//               cout << "pos[" << kp_other << "] = " << pos[kp_other] << '\n';
+//               res = max(res, {len, kp});
+//             } else {
+//               pos[kp] = len;
+//             }
+//           }
+//           cout << "kp: " << kp << ", len: " << len << ", kp_other: " << kp_other << '\n';
+//         } else {
+//           auto [b_recur, res_recur] = f({len + pp - kp + 1, kp}, sp, f);
+//           if (b_recur == 3) {
+//             cout << "res_recur: " << res_recur << '\n';
+//             res = max(res, res_recur);
+//           }
+//         }
+//       }
+//     }
+//     return {b, res};
+//   };
+//   auto [b, res] = dfs({0, 0}, ROOT, dfs);
+//   auto [len, i] = res;
+//   if (b != 3) return sa.substr(0, 0);
+//   bool first = i - len < sa.size();
+//   cout << "res: " << res << '\n';
+//   if (first) {
+//     return sva.substr(i - len, len);
+//   } else {
+//     return sva.substr(i - len - sa.size() + 1, len);
+//   }
+// }
 
 #include <iostream>
 template <int Alph, char SC>

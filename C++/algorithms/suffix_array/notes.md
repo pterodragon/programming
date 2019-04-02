@@ -21,13 +21,13 @@ Let $LCP[x] = q > 1$
 $q = 0, 1 \Rightarrow PLCP[0] = 0, 1; PLCP[1] \ge PLCP[1 - 1] - 1 = -1, 0\therefore$ the theorem holds
 
 say
-$T[sa[x]:] = T[0:] = T = t_0t_1\dots t_{q - 1}\dots t_n$
-$T[sa[x - 1]:] = t_{z}t_{z + 1}\dots t_{z + q - 1}\dots t_n$
+$T[sa[x]:] = T[0:] = T = t_0t_1\dots t_{q - 1}\dots t_{n-1}$
+$T[sa[x - 1]:] = t_{z}t_{z + 1}\dots t_{z + q - 1}\dots t_{n-1}$
 where $t_{z}t_{z + 1}\dots t_{z + q - 1} = t_0t_1\dots t_{q - 1}$
 and $T[sa[x - 1]:]$ is lexicographically smaller than $T[sa[x]:]$
 
 losing length of 1 starting from index $1$,
-$T[sa[y]:] = T[1:] = T = t_1t_2\dots t_{q - 1}\dots t_n$
+$T[sa[y]:] = T[1:] = T = t_1t_2\dots t_{q - 1}\dots t_{n-1}$
 $T[sa[y - 1]:]$ must have a prefix $t_1t_2\dots t_{q - 1}$ starting from another index
 because there is at least one string $W = T[sa[x - 1] + 1:] =t_{z + 1}\dots t_{z + q - 1}$ which spells that prefix and $W$ is lexicographically smaller than $T[sa[y]:]$
 

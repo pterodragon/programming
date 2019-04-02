@@ -64,15 +64,15 @@ class Test {
     for (int q = 0; q < N; ++q) {
       for (int w = q + 1; q + w < N; ++w) {
         string_view pat(s.data() + q, w);
-        auto arg = string(pat) + uc;
-        auto lcs = SuffixTree<28, 'a'>::lcs(s, arg);
+        auto arg = string(pat);
+        auto lcs = SuffixTree<29, 'a'>::lcs(s, arg);
         testcase(lcs, pat);
-        arg = uc + string(pat) + uc;
-        lcs = SuffixTree<28, 'a'>::lcs(s, arg);
+        arg = uc + string(pat);
+        lcs = SuffixTree<29, 'a'>::lcs(s, arg);
         testcase(lcs, pat);
       }
     }
-    auto lcs = SuffixTree<28, 'a'>::lcs(s, uc);
+    auto lcs = SuffixTree<29, 'a'>::lcs(s, uc);
     testcase(lcs, "");
   }
 
@@ -115,6 +115,9 @@ int main(int argc, char** argv) {
     x += "$"; // add unique char
     SuffixTree<256, '\0'> st(x);
     st.print();
+    string xx(begin(x), end(x) - 1);
+    // auto lps = SuffixTree<256, '\0'>::lps(xx);
+    // cout << "lps of '" << x << "' is '" << lps << "'\n";
     bool ok = st.has_substr(y);
     cout << "st '" << x << "' has substring '" << y << "': " << boolalpha << ok
          << '\n';
@@ -134,19 +137,27 @@ int main(int argc, char** argv) {
     string x{s};
     Test test(x);
     test.test_substr();
+    test.test_lcs();
     string y = x + string(1, 'a' + 26);  // append unique char
     Test test2(y);
     test2.test_search_all();
     test2.test_lrs();
-    test2.test_lcs();
   }
   for (auto [a, b, exp] : {tuple{"azaxzaz", "bcccbbbzabcccbb", "za"},
-                           {"qwerxreqxrqe", "rewqxrqxereq", "qxrq"}}) {
-    string uc(1, 'a' + 27);
-    string uc2(1, 'a' + 28);
-    string a_arg = string(a) + uc;
-    string b_arg = string(b) + uc2;
-    auto lcs = SuffixTree<28, 'a'>::lcs(a_arg, b_arg);
+                           {"qwerxreqxrqe", "rewqxrqxereq", "qxrq"},
+                           {"", "", ""},
+                           {"a", "", ""},
+                           {"", "a", ""},
+                           }) {
+    auto lcs = SuffixTree<28, 'a'>::lcs(a, b);
     testcase(lcs, exp);
   }
+  // for (auto [a, exp] : {tuple{"bcabeffbacb", "ff"},
+  //                          {"babeffbab", "bab"},
+  //                          {"", ""},
+  //                          {"abacdfgdcaba", "aba"},
+  //                          }) {
+  //   auto lps = SuffixTree<256, '\0'>::lps(a);
+  //   testcase(lps, exp);
+  // }
 }

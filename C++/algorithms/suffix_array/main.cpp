@@ -80,9 +80,21 @@ struct Test {
                                {"babaabaaabaaaabaaaaa", "", ""},
                                {"", "", ""},
                                {"xxxa", "ba", "a"}}) {
-      auto actual = SuffixArray::lcs(s1, s2);
+      auto actual = SuffixArray<>::lcs(s1, s2);
       testcase(actual, exp)
-      actual = SuffixArray::lcs(s2, s1);
+      actual = SuffixArray<>::lcs(s2, s1);
+      testcase(actual, exp)
+      actual = SuffixArray<>::lcs<'|'>(s2, s1);
+      testcase(actual, exp)
+      actual = SuffixArray<>::lcs<'|'>(s1, s2);
+      testcase(actual, exp)
+      actual = SuffixArray<27, 'a'>::lcs<'{'>(s2, s1);
+      testcase(actual, exp)
+      actual = SuffixArray<27, 'a'>::lcs<'{'>(s1, s2);
+      testcase(actual, exp)
+      actual = SuffixArray<256>::lcs<'\xff'>(s2, s1);
+      testcase(actual, exp)
+      actual = SuffixArray<256>::lcs<'\xff'>(s1, s2);
       testcase(actual, exp)
     }
   }
@@ -90,7 +102,7 @@ struct Test {
  private:
   string T;
   int n;
-  SuffixArray sa;
+  SuffixArray<> sa;
 };
 
 void run_test() {
@@ -113,7 +125,7 @@ int main(int argc, char** argv) {
     cout << "lrs of " << sv << " is " << sv.substr(l, r) << '\n';
     cout << "lcp of " << sv << " is " << sa.lcp() << '\n';
     if (!sv2.empty()) {
-      auto lcs = SuffixArray::lcs(sv, sv2);
+      auto lcs = SuffixArray<>::lcs(sv, sv2);
       cout << "lcs of (" << sv << ", " << sv2 << ") is " << lcs << '\n';
     }
   } else {
