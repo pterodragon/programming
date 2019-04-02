@@ -1,11 +1,11 @@
-#ifndef SUFFIX_ARraY_HPP
-#define SUFFIX_ARraY_HPP
+#ifndef SUFFIX_ARRAY_HPP
+#define SUFFIX_ARRAY_HPP
 
+#include <algorithm>
 #include <array>
+#include <numeric>
 #include <string_view>
 #include <vector>
-#include <numeric>
-#include <algorithm>
 
 using namespace std;
 
@@ -30,59 +30,85 @@ using namespace std;
  *
  *         ^ ^ requires 2 counting sorts anyway
  *
- * In this implementation, counting sort the 2^k'th column first and then sort the 0'th column (k = 1, 2, 3,...) will result in R1, R2, R4
+ * In this implementation, counting sort the 2^k'th column first and then sort
+ * the 0'th column (k = 1, 2, 3,...) will result in R1, R2, R4
  */
+
+#include <iostream>
+#include "prettyprint.hpp"
+
 class SuffixArray {
  public:
-  SuffixArray(string_view sv) : sv(sv), n(sv.length()), temp(n), ra(n), sa(n) {
+  SuffixArray(string_view sv) : sv(sv), N(sv.length()), ra(N), sa(N) {
     construct();
   }
 
   void print() const;
-  int binary_search(string_view sv) const;
+  vector<int> binary_search(string_view sv) const;
   vector<int> lcp() const;
   vector<int> plcp() const;
   pair<int, int> lrs() const;
 
-  static pair<int, int> lcs(string_view s1, string_view s2);
+  template <char UC = '$'>
+  static string_view lcs(string_view s1, string_view s2);
 
  private:
   // stable sort is necessary
   // using std::stable_sort to skip this but increase complexity
-  void counting_sort(int k) {
-    c.fill(0);
-    for (int i = 0; i < n; ++i) ++c[i + k < n ? ra[i + k] : 0];
+  inline void counting_sort(int k) {
+    vector<int> temp(N);
+    array<int, 256> c{};
+    for (int i = 0; i < N; ++i) ++c[i + k < N ? ra[i + k] : 0];
     partial_sum(begin(c), end(c), begin(c));
-    for (int i = n - 1; i >= 0 && i < n; --i)
-      temp[--c[sa[i] + k < n ? ra[sa[i] + k]: 0]] = sa[i];
+    for (int i = N - 1; i >= 0; --i)
+      temp[--c[sa[i] + k < N ? ra[sa[i] + k] : 0]] = sa[i];
 
     sa = temp;
   }
 
   void construct() {
+    vector<int> temp(N);
     copy(begin(sv), end(sv), begin(ra));
     iota(begin(sa), end(sa), 0);
-    for (int k = 1; k < n; k <<= 1) {
+    for (int k = 1; k < N; k <<= 1) {
       counting_sort(k);
       counting_sort(0);
-      temp[sa[0]] = 0;
-      for (int i = 1, r = 0; i < n; ++i) {  // rerank
+      temp[sa[0]] = 1;  // r (rank) starts from 1 below; sa[i] + k > n => rank 0
+      for (int i = 1, r = 1; i < N; ++i) {  // rerank
         r += ra[sa[i]] != ra[sa[i - 1]] || ra[sa[i] + k] != ra[sa[i - 1] + k];
         temp[sa[i]] = r;
       }
       ra = temp;
-      if (ra[sa[n - 1]] == n - 1) break;  // all rank different => finished
+      if (ra[sa[N - 1]] == N) break;  // all rank different => finished
     }
   }
 
   const string_view sv;
+
  public:
-  const int n;
+  const int N;
+
  private:
-  array<int, 256> c;
-  vector<int> temp;
-  vector<int> ra; // rank array
-  vector<int> sa; // suffix array
+  vector<int> ra;  // rank array
+  vector<int> sa;  // suffix array
 };
 
-#endif /* SUFFIX_ARraY_HPP */
+/*
+ * return (a, b) of the longest common substring of s1, s2
+ * where s1[a:a+b] is the lcs
+ *
+ * WARNING: s1 and s2 cannot have the UC (unique char)
+ */
+template <char UC>
+string_view SuffixArray::lcs(string_view s1, string_view s2) {
+  auto cat = string(s1) + UC + string(s2);
+  auto sa = SuffixArray(cat);
+  auto lcp = sa.lcp();
+  auto is_s1 = [&sa, m = s1.size()](int q) { return sa.sa[q] < m; };
+  int z = 0;
+  for (int q = 1; q < sa.N; ++q)
+    if (lcp[q] > lcp[z] && is_s1(q - 1) != is_s1(q)) z = q;
+
+  return s1.substr(sa.sa[z - (sa.sa[z] > s1.size())], lcp[z]);
+}
+#endif /* SUFFIX_ARRAY_HPP */
