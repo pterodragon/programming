@@ -2,10 +2,9 @@
 #define SOLUTION_HPP
 
 #include <algorithm>
-#include <iostream>
-#include <vector>
 #include <cstring>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -15,19 +14,27 @@ public:
     // column by column update (columns: coin denomination sorted)
     sort(begin(C), end(C));
     const int M = C.size();
+    if (M == 0)
+      return N == 0 ? 1 : 0;
+    if (N == 0)
+      return 1;
+    ++N;
 
     int dp[N][M];
     memset(dp, 0, N * M * sizeof(int));
-    for (int w = 0; w < M; ++w) {
-      if (w < N) dp[w][w] = 1;
-    }
+    dp[0][0] = 1;
+
+    // Forward DP method
     for (int q = 0; q < N; ++q) {
       for (int w = 0; w < M; ++w) {
-         cout << dp[q][w] << ", ";
+        if (int z = q + C[w]; z < N)
+          dp[z][w] += dp[q][w];
+
+        if (w < M - 1)
+          dp[q][w + 1] += dp[q][w];
       }
-      cout << '\n';
     }
-    return 42;
+    return dp[N - 1][M - 1];
   }
 };
 
