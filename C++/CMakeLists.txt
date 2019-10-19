@@ -4,15 +4,10 @@ project (code_exercises)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 set(THIRD_PARTY_DIR "${CMAKE_CURRENT_LIST_DIR}/third_party")
 list(APPEND CMAKE_INCLUDE_PATH ${THIRD_PARTY_DIR})
+add_subdirectory(third_party/Catch2/)
 
 include(FindPackageHandleStandardArgs)
 find_package(cxx_prettyprint REQUIRED)
-
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_MULTITHREADED ON)
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-
-find_package(Boost 1.62.0 COMPONENTS unit_test_framework filesystem regex REQUIRED)
 
 option(build_leetcode_only "build_leetcode_only" OFF)
 option(build_codeforces_only "build_codeforces_only" OFF)

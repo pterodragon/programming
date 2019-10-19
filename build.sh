@@ -22,6 +22,7 @@ while getopts "ecarp:" o; do
 done
 shift $((OPTIND-1))
 
+# specifiy target to build
 target="$1"
 if [ -z $target ];
 then
@@ -31,5 +32,5 @@ fi
 export CXX="clang++"
 export CC="clang"
 
-cmake -H"C++" -Bbuild $algorithms_only $codeforces_only $leetcode_only -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBOOST_ROOT=$(pwd)/C++/third_party -DCMAKE_CXX_FLAGS=-std=c++17 -DCMAKE_BUILD_TYPE=$build_type
+cmake -H"C++" -Bbuild $algorithms_only $codeforces_only $leetcode_only -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_FLAGS=-std=c++17 -DCMAKE_BUILD_TYPE=$build_type
 cmake --build build --config $build_type --target $target -- -j 8

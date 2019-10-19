@@ -1,0 +1,9 @@
+f(a,b,c,d)
+= f(a^b,b^c,c^d)
+= f(a^b^b^c,b^c^c^d) = f(a^c,b^d)
+= a^b^c^d
+
+f(a,b,c,d,e,f)
+= f(a^b,b^c,c^d)
+= f(a^b^b^c,b^c^c^d) = f(a^c,b^d)
+= a^b^c^d
