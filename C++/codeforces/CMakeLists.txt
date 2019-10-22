@@ -54,6 +54,7 @@ FOREACH(subdir ${SUBDIRS})
             WORKING_DIRECTORY ${test_output_dir}
         )
         set_target_properties(${test_name} PROPERTIES
+            CXX_STANDARD 17
             RUNTIME_OUTPUT_DIRECTORY ${test_output_dir}
         )
         FOREACH(test_file ${TEST_FILES})
