@@ -12,9 +12,7 @@ MACRO(SUBDIRLIST result curdir)
 ENDMACRO()
 
 set(leetcode_dir ${CMAKE_CURRENT_SOURCE_DIR})
-set(test_common_dir "${leetcode_dir}/test_common")
 SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
-list(FILTER SUBDIRS EXCLUDE REGEX "test_common")
 
 enable_testing ()
 
@@ -42,12 +40,11 @@ FOREACH(subdir ${SUBDIRS})
     )
 
     if (TEST_SOURCES)
-        # LIST(APPEND TEST_SOURCES "${test_common_dir}/test_common.cpp")
         set(test_name "${subdirname}_test")
         set(test_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${subdirname}/test")
         add_executable(${test_name} ${TEST_SOURCES} ${TEST_HEADERS})
         target_include_directories(${test_name} PRIVATE
-            ${test_common_dir} ${subdirname} ${CXX_PRETTYPRINT_DIR}
+            ${subdirname} ${CXX_PRETTYPRINT_DIR}
         )
         target_link_libraries(${test_name} Catch2::Catch2)
 

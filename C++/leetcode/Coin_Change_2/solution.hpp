@@ -16,8 +16,6 @@ public:
     const int M = C.size();
     if (M == 0)
       return N == 0 ? 1 : 0;
-    if (N == 0)
-      return 1;
     ++N;
 
     int dp[N][M];
