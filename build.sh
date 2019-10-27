@@ -1,7 +1,10 @@
 temp=""
 build_type="Debug"
-while getopts "ecarp:" o; do
+while getopts "decarp:" o; do
     case "${o}" in
+        d) # build atcoder only
+            atcoder_only="-Dbuild_atcoder_only=ON"
+            ;;
         e) # build leetcode only
             leetcode_only="-Dbuild_leetcode_only=ON"
             ;;
@@ -32,5 +35,5 @@ fi
 export CXX="clang++"
 export CC="clang"
 
-cmake -H"C++" -Bbuild $algorithms_only $codeforces_only $leetcode_only -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_FLAGS=-std=c++17 -DCMAKE_BUILD_TYPE=$build_type
+cmake -H"C++" -Bbuild $atcoder_only $algorithms_only $codeforces_only $leetcode_only -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_FLAGS=-std=c++17 -DCMAKE_BUILD_TYPE=$build_type
 cmake --build build --config $build_type --target $target -- -j 8
