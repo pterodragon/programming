@@ -2,6 +2,7 @@
 #include <iostream>
 
 using namespace std;
+long long dp[MAX_W][MAX_N];
 
 int main() {
   int N, W;
@@ -10,6 +11,6 @@ int main() {
   for (int q = 0; q < N; ++q)
     cin >> w[q] >> v[q];
  
-  long long ans = solve(N, W, v, w);
+  long long ans = solve(N, W, v, w, dp);
   cout << ans << '\n';
 }
