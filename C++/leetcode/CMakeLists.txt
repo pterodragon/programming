@@ -34,7 +34,7 @@ FOREACH(subdir ${SUBDIRS})
     target_link_libraries(${subproject_name} Catch2::Catch2)
 
     target_include_directories(${subproject_name} PRIVATE ${CXX_PRETTYPRINT_DIR})
-    target_compile_options(${subproject_name} PRIVATE "-std=c++17")  # force flag to be written to compile_database.json
+    target_compile_options(${subproject_name} PRIVATE "-std=c++20")  # force flag to be written to compile_database.json
     set_target_properties(${subproject_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${subdirname}"
     )

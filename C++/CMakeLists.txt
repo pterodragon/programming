@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.6)
 project (code_exercises)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 set(THIRD_PARTY_DIR "${CMAKE_CURRENT_LIST_DIR}/third_party")
